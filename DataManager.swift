@@ -1,0 +1,394 @@
+import Foundation
+import SwiftUI
+import Combine
+import Supabase
+
+class DataManager: ObservableObject {
+    static let shared = DataManager()
+    
+    let client = SupabaseClient(
+        supabaseURL: URL(string: Config.supabaseUrl)!,
+        supabaseKey: Config.supabaseKey,
+        options: SupabaseClientOptions(
+            auth: .init(storage: NoOpAuthLocalStorage())
+        )
+    )
+    
+    @Published var transactions: [Transaction] = []
+    @Published var wallets: [Wallet] = []
+    @Published var assets: [Asset] = []
+    @Published var categories: [Category] = []
+    @Published var isAmountHidden: Bool = false
+    
+    init() {
+        Task {
+            await fetchData()
+        }
+    }
+    
+    @MainActor
+    func fetchData() async {
+        do {
+            let categories: [Category] = try await client.from("categories").select().execute().value
+            self.categories = categories
+            
+            let wallets: [Wallet] = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
+            self.wallets = wallets
+            
+            let assets: [Asset] = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
+            self.assets = assets
+            
+            let transactions: [Transaction] = try await client.from("transactions").select().order("date", ascending: false).execute().value
+            self.transactions = transactions
+            
+        } catch {
+            print("Error fetching data: \(error)")
+        }
+    }
+    
+    @MainActor
+    func addTransaction(_ transaction: Transaction) async {
+        do {
+            let _: Transaction = try await client.from("transactions").insert(transaction).select().single().execute().value
+            
+            // Update Balance
+            if transaction.type == .expense {
+                if let walletId = transaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance -= transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
+                }
+                
+                if let assetId = transaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
+                    var asset = assets[index]
+                    asset.value -= transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: assetId).execute()
+                }
+            } else if transaction.type == .income {
+                if let walletId = transaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance += transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
+                }
+                
+                if let assetId = transaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
+                    var asset = assets[index]
+                    asset.value += transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: assetId).execute()
+                }
+            } else if transaction.type == .transfer {
+                // Decrease from source
+                if let fromWalletId = transaction.fromWalletId, let index = wallets.firstIndex(where: { $0.id == fromWalletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance -= transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: fromWalletId).execute()
+                } else if let fromAssetId = transaction.fromAssetId, let index = assets.firstIndex(where: { $0.id == fromAssetId }) {
+                    var asset = assets[index]
+                    asset.value -= transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: fromAssetId).execute()
+                }
+                
+                // Increase to destination
+                // Fetch fresh data to ensure we have the latest balance (handling case where source == dest)
+                if let toWalletId = transaction.toWalletId {
+                     var wallet: Wallet = try await client.from("wallets").select().eq("id", value: toWalletId).single().execute().value
+                     wallet.balance += transaction.amount
+                     try await client.from("wallets").update(wallet).eq("id", value: toWalletId).execute()
+                } else if let toAssetId = transaction.toAssetId {
+                    var asset: Asset = try await client.from("assets").select().eq("id", value: toAssetId).single().execute().value
+                    asset.value += transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: toAssetId).execute()
+                }
+            }
+            
+            await fetchData()
+        } catch {
+            print("Error adding transaction: \(error)")
+        }
+    }
+    
+    @MainActor
+    func deleteTransaction(id: Int) async {
+        do {
+            // Get transaction to revert balance
+            let transaction: Transaction = try await client.from("transactions").select().eq("id", value: id).single().execute().value
+            
+            if transaction.type == .expense {
+                if let walletId = transaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance += transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
+                }
+                
+                if let assetId = transaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
+                    var asset = assets[index]
+                    asset.value += transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: assetId).execute()
+                }
+            } else if transaction.type == .income {
+                if let walletId = transaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance -= transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
+                }
+                
+                if let assetId = transaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
+                    var asset = assets[index]
+                    asset.value -= transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: assetId).execute()
+                }
+            } else if transaction.type == .transfer {
+                // Revert: Increase Source, Decrease Destination
+                if let fromWalletId = transaction.fromWalletId, let index = wallets.firstIndex(where: { $0.id == fromWalletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance += transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: fromWalletId).execute()
+                } else if let fromAssetId = transaction.fromAssetId, let index = assets.firstIndex(where: { $0.id == fromAssetId }) {
+                    var asset = assets[index]
+                    asset.value += transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: fromAssetId).execute()
+                }
+                
+                if let toWalletId = transaction.toWalletId, let index = wallets.firstIndex(where: { $0.id == toWalletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance -= transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: toWalletId).execute()
+                } else if let toAssetId = transaction.toAssetId, let index = assets.firstIndex(where: { $0.id == toAssetId }) {
+                    var asset = assets[index]
+                    asset.value -= transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: toAssetId).execute()
+                }
+            }
+            
+            try await client.from("transactions").delete().eq("id", value: id).execute()
+            await fetchData()
+        } catch {
+            print("Error deleting transaction: \(error)")
+        }
+    }
+    
+    @MainActor
+    func updateTransaction(_ transaction: Transaction) async {
+        do {
+            // 1. Revert effect of OLD transaction
+            // Fetch the existing transaction from DB to know what to revert
+            let oldTransaction: Transaction = try await client.from("transactions").select().eq("id", value: transaction.id!).single().execute().value
+            
+            if oldTransaction.type == .expense {
+                if let walletId = oldTransaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance += oldTransaction.amount // Add back expense
+                    try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
+                }
+                if let assetId = oldTransaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
+                    var asset = assets[index]
+                    asset.value += oldTransaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: assetId).execute()
+                }
+            } else if oldTransaction.type == .income { // Income
+                if let walletId = oldTransaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
+                    var wallet = wallets[index]
+                    wallet.balance -= oldTransaction.amount // Remove income
+                    try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
+                }
+                if let assetId = oldTransaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
+                    var asset = assets[index]
+                    asset.value -= oldTransaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: assetId).execute()
+                }
+            } else if oldTransaction.type == .transfer {
+                // Revert Transfer: Increase Source, Decrease Destination
+                if let fromWalletId = oldTransaction.fromWalletId {
+                    var wallet: Wallet = try await client.from("wallets").select().eq("id", value: fromWalletId).single().execute().value
+                    wallet.balance += oldTransaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: fromWalletId).execute()
+                } else if let fromAssetId = oldTransaction.fromAssetId {
+                    var asset: Asset = try await client.from("assets").select().eq("id", value: fromAssetId).single().execute().value
+                    asset.value += oldTransaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: fromAssetId).execute()
+                }
+                
+                if let toWalletId = oldTransaction.toWalletId {
+                    var wallet: Wallet = try await client.from("wallets").select().eq("id", value: toWalletId).single().execute().value
+                    wallet.balance -= oldTransaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: toWalletId).execute()
+                } else if let toAssetId = oldTransaction.toAssetId {
+                    var asset: Asset = try await client.from("assets").select().eq("id", value: toAssetId).single().execute().value
+                    asset.value -= oldTransaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: toAssetId).execute()
+                }
+            }
+            
+            // 2. Apply effect of NEW transaction
+            
+            if transaction.type == .expense {
+                if let walletId = transaction.walletId {
+                    // Fetch latest wallet state
+                    var wallet: Wallet = try await client.from("wallets").select().eq("id", value: walletId).single().execute().value
+                    wallet.balance -= transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
+                }
+                if let assetId = transaction.assetId {
+                    var asset: Asset = try await client.from("assets").select().eq("id", value: assetId).single().execute().value
+                    asset.value -= transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: assetId).execute()
+                }
+            } else if transaction.type == .income { // Income
+                if let walletId = transaction.walletId {
+                    var wallet: Wallet = try await client.from("wallets").select().eq("id", value: walletId).single().execute().value
+                    wallet.balance += transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
+                }
+                if let assetId = transaction.assetId {
+                    var asset: Asset = try await client.from("assets").select().eq("id", value: assetId).single().execute().value
+                    asset.value += transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: assetId).execute()
+                }
+            } else if transaction.type == .transfer {
+                // Apply Transfer: Decrease Source, Increase Destination
+                if let fromWalletId = transaction.fromWalletId {
+                    var wallet: Wallet = try await client.from("wallets").select().eq("id", value: fromWalletId).single().execute().value
+                    wallet.balance -= transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: fromWalletId).execute()
+                } else if let fromAssetId = transaction.fromAssetId {
+                    var asset: Asset = try await client.from("assets").select().eq("id", value: fromAssetId).single().execute().value
+                    asset.value -= transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: fromAssetId).execute()
+                }
+                
+                if let toWalletId = transaction.toWalletId {
+                    var wallet: Wallet = try await client.from("wallets").select().eq("id", value: toWalletId).single().execute().value
+                    wallet.balance += transaction.amount
+                    try await client.from("wallets").update(wallet).eq("id", value: toWalletId).execute()
+                } else if let toAssetId = transaction.toAssetId {
+                    var asset: Asset = try await client.from("assets").select().eq("id", value: toAssetId).single().execute().value
+                    asset.value += transaction.amount
+                    try await client.from("assets").update(asset).eq("id", value: toAssetId).execute()
+                }
+            }
+            
+            // 3. Update the transaction itself
+            try await client.from("transactions").update(transaction).eq("id", value: transaction.id!).execute()
+            
+            await fetchData()
+        } catch {
+            print("Error updating transaction: \(error)")
+        }
+    }
+    
+    @MainActor
+    func addWallet(_ wallet: Wallet) async {
+        do {
+            let _: Wallet = try await client.from("wallets").insert(wallet).select().single().execute().value
+            await fetchData()
+        } catch {
+            print("Error adding wallet: \(error)")
+        }
+    }
+    
+    @MainActor
+    func deleteWallet(id: Int) async {
+        // Optimistic update
+        if let index = wallets.firstIndex(where: { $0.id == id }) {
+            wallets.remove(at: index)
+        }
+        
+        do {
+            // Delete associated transactions first
+            try await client.from("transactions").delete().eq("wallet_id", value: id).execute()
+            
+            try await client.from("wallets").delete().eq("id", value: id).execute()
+            await fetchData()
+        } catch {
+            print("Error deleting wallet: \(error)")
+            await fetchData() // Re-fetch if failed
+        }
+    }
+    
+    @MainActor
+    func addAsset(_ asset: Asset) async {
+        do {
+            let _: Asset = try await client.from("assets").insert(asset).select().single().execute().value
+            await fetchData()
+        } catch {
+            print("Error adding asset: \(error)")
+        }
+    }
+    
+    @MainActor
+    func deleteAsset(id: Int) async {
+        // Optimistic update
+        if let index = assets.firstIndex(where: { $0.id == id }) {
+            assets.remove(at: index)
+        }
+        
+        do {
+            // Delete associated transactions first
+            try await client.from("transactions").delete().eq("asset_id", value: id).execute()
+            
+            try await client.from("assets").delete().eq("id", value: id).execute()
+            await fetchData()
+        } catch {
+            print("Error deleting asset: \(error)")
+            await fetchData() // Re-fetch if failed
+        }
+    }
+    
+    @MainActor
+    func updateWallet(_ wallet: Wallet) async {
+        do {
+            try await client.from("wallets").update(wallet).eq("id", value: wallet.id!).execute()
+            await fetchData()
+        } catch {
+            print("Error updating wallet: \(error)")
+        }
+    }
+    
+    @MainActor
+    func updateAsset(_ asset: Asset) async {
+        do {
+            try await client.from("assets").update(asset).eq("id", value: asset.id!).execute()
+            await fetchData()
+        } catch {
+            print("Error updating asset: \(error)")
+        }
+    }
+    
+    @MainActor
+    func reorderWallets(_ wallets: [Wallet]) async {
+        self.wallets = wallets
+        
+        do {
+            for (index, wallet) in wallets.enumerated() {
+                var updatedWallet = wallet
+                updatedWallet.sortOrder = index
+                try await client.from("wallets").update(updatedWallet).eq("id", value: wallet.id!).execute()
+            }
+        } catch {
+            print("Error reordering wallets: \(error)")
+            await fetchData()
+        }
+    }
+    
+    @MainActor
+    func reorderAssets(_ assets: [Asset]) async {
+        self.assets = assets
+        
+        do {
+            for (index, asset) in assets.enumerated() {
+                var updatedAsset = asset
+                updatedAsset.sortOrder = index
+                try await client.from("assets").update(updatedAsset).eq("id", value: asset.id!).execute()
+            }
+        } catch {
+            print("Error reordering assets: \(error)")
+            await fetchData()
+        }
+    }
+}
+
+struct NoOpAuthLocalStorage: AuthLocalStorage {
+    func store(key: String, value: Data) throws {}
+    func retrieve(key: String) throws -> Data? { return nil }
+    func remove(key: String) throws {}
+}
