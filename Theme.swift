@@ -5,6 +5,7 @@ struct Theme {
     static let cardBackground = Color(uiColor: .secondarySystemBackground)
     static let textPrimary = Color.primary
     static let textSecondary = Color.secondary
+    static let primary = Color.blue
     
     static func glassMaterial() -> Material {
         return .ultraThinMaterial

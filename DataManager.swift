@@ -385,6 +385,20 @@ class DataManager: ObservableObject {
             await fetchData()
         }
     }
+    
+    func getCategoryIcon(for name: String) -> String {
+        return categories.first(where: { $0.name == name })?.icon ?? "questionmark.circle"
+    }
+    
+    @MainActor
+    func addCategory(_ category: Category) async {
+        do {
+            let _: Category = try await client.from("categories").insert(category).select().single().execute().value
+            await fetchData()
+        } catch {
+            print("Error adding category: \(error)")
+        }
+    }
 }
 
 struct NoOpAuthLocalStorage: AuthLocalStorage {

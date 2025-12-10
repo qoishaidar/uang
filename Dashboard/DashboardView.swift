@@ -169,86 +169,85 @@ struct ExpenseChartView: View {
     var isHidden: Bool
     @State private var showDetails = false
     
-    var aggregatedExpenses: [(category: String, amount: Double)] {
+    var aggregatedExpenses: [(category: String, amount: Double, color: Color)] {
         let expenses = transactions.filter { $0.type == .expense }
         let grouped = Dictionary(grouping: expenses, by: { $0.category })
-        return grouped.map { category, transactions in
+        let sorted = grouped.map { category, transactions in
             (category: category, amount: abs(transactions.reduce(0) { $0 + $1.amount }))
         }.sorted { $0.amount > $1.amount }
+        
+        let colors: [Color] = [.blue, .green, .orange, .purple, .pink, .yellow, .red, .cyan, .mint, .indigo]
+        
+        return sorted.enumerated().map { index, item in
+            (category: item.category, amount: item.amount, color: colors[index % colors.count])
+        }
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Expenses")
+        VStack(alignment: .leading, spacing: 24) {
+            Text("Expenses Breakdown")
                 .font(.headline)
                 .foregroundColor(Theme.textPrimary)
             
-            Chart {
-                ForEach(aggregatedExpenses, id: \.category) { item in
-                    BarMark(
-                        x: .value("Category", item.category),
-                        y: .value("Amount", item.amount)
+            if aggregatedExpenses.isEmpty {
+                Text("No expenses yet")
+                    .font(.subheadline)
+                    .foregroundColor(Theme.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+            } else {
+                Chart(aggregatedExpenses, id: \.category) { item in
+                    SectorMark(
+                        angle: .value("Amount", item.amount),
+                        innerRadius: .ratio(0.618),
+                        angularInset: 1.5
                     )
-                    .foregroundStyle(Color.primary.opacity(0.8))
-                    .cornerRadius(4)
+                    .cornerRadius(5)
+                    .foregroundStyle(item.color)
                 }
-            }
-            .frame(height: 200)
-            .chartYAxis {
-                AxisMarks(position: .leading, values: .automatic) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [5, 5]))
-                        .foregroundStyle(Color.primary.opacity(0.2))
-                    if isHidden {
-                        AxisValueLabel { Text("•••") }
-                    } else {
-                        AxisValueLabel(format: .currency(code: "IDR"))
-                            .foregroundStyle(Color.primary.opacity(0.5))
-                    }
-                }
-            }
-            .chartXAxis(.hidden)
-            .chartXScale(domain: aggregatedExpenses.map { $0.category })
-            
-            if !aggregatedExpenses.isEmpty {
-                Divider()
-                    .background(Color.primary.opacity(0.2))
+                .frame(height: 220)
                 
-                Button(action: { withAnimation { showDetails.toggle() } }) {
-                    HStack {
-                        Text(showDetails ? "Hide Details" : "Show Details")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        Spacer()
-                        Image(systemName: "chevron.down")
-                            .rotationEffect(.degrees(showDetails ? 180 : 0))
+                if !aggregatedExpenses.isEmpty {
+                    Divider()
+                        .background(Color.primary.opacity(0.2))
+                    
+                    Button(action: { withAnimation { showDetails.toggle() } }) {
+                        HStack {
+                            Text(showDetails ? "Hide Details" : "Show Details")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .rotationEffect(.degrees(showDetails ? 180 : 0))
+                        }
+                        .foregroundColor(Theme.textPrimary)
                     }
-                    .foregroundColor(Theme.textPrimary)
-                }
-                
-                if showDetails {
-                    VStack(spacing: 12) {
-                        ForEach(aggregatedExpenses, id: \.category) { item in
-                            HStack {
-                                Circle()
-                                    .fill(Color.primary.opacity(0.8))
-                                    .frame(width: 8, height: 8)
-                                Text(item.category)
-                                    .font(.subheadline)
-                                    .foregroundColor(Theme.textPrimary)
-                                Spacer()
-                                Text(item.amount.formatted(.currency(code: "IDR")))
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Theme.textPrimary)
-                                    .hideAmount(if: isHidden)
+                    
+                    if showDetails {
+                        VStack(spacing: 16) {
+                            ForEach(aggregatedExpenses, id: \.category) { item in
+                                HStack {
+                                        Image(systemName: DataManager.shared.getCategoryIcon(for: item.category))
+                                        .foregroundColor(item.color)
+                                        .font(.subheadline)
+                                    Text(item.category)
+                                        .font(.subheadline)
+                                        .foregroundColor(Theme.textPrimary)
+                                    Spacer()
+                                    Text(item.amount.formatted(.currency(code: "IDR")))
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Theme.textPrimary)
+                                        .hideAmount(if: isHidden)
+                                }
                             }
                         }
+                        .transition(.opacity.combined(with: .move(edge: .top)))
                     }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
         }
-        .padding()
+        .padding(24)
         .glassCard()
     }
 }
@@ -263,8 +262,9 @@ struct TransactionRow: View {
                 Circle()
                     .fill(Color.primary.opacity(0.1))
                     .frame(width: 48, height: 48)
-                Text(String(transaction.category.prefix(1)))
+                Image(systemName: DataManager.shared.getCategoryIcon(for: transaction.category))
                     .font(.title2)
+                    .foregroundColor(Theme.textPrimary)
             }
             
             VStack(alignment: .leading, spacing: 4) {

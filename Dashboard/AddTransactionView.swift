@@ -131,7 +131,7 @@ struct AddTransactionView: View {
             Picker("Category", selection: $selectedCategory) {
                 Text("Select Category").tag(nil as Category?)
                 ForEach(dataManager.categories.filter { $0.type.rawValue == type.rawValue }) { category in
-                    Text(category.icon + " " + category.name).tag(category as Category?)
+                    Label(category.name, systemImage: category.icon).tag(category as Category?)
                 }
             }
         }
