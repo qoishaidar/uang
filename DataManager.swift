@@ -23,28 +23,60 @@ class DataManager: ObservableObject {
     @Published var totalIncome: Double = 0
     @Published var totalExpense: Double = 0
     
+    private let cacheFileName = "data_cache.json"
+    private var cacheFileURL: URL? {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(cacheFileName)
+    }
+    
     init() {
+        loadFromCache()
         Task {
             await fetchData()
+        }
+    }
+    
+    private func loadFromCache() {
+        guard let url = cacheFileURL, let data = try? Data(contentsOf: url) else { return }
+        do {
+            let cache = try JSONDecoder().decode(CacheData.self, from: data)
+            self.transactions = cache.transactions
+            self.wallets = cache.wallets
+            self.assets = cache.assets
+            self.categories = cache.categories
+            calculateTotals()
+        } catch {
+            print("Error loading from cache: \(error)")
+        }
+    }
+    
+    private func saveToCache() {
+        guard let url = cacheFileURL else { return }
+        let cache = CacheData(transactions: transactions, wallets: wallets, assets: assets, categories: categories)
+        do {
+            let data = try JSONEncoder().encode(cache)
+            try data.write(to: url)
+        } catch {
+            print("Error saving to cache: \(error)")
         }
     }
     
     @MainActor
     func fetchData() async {
         do {
-            let categories: [Category] = try await client.from("categories").select().execute().value
-            self.categories = categories
+            async let categoriesTask: [Category] = client.from("categories").select().execute().value
+            async let walletsTask: [Wallet] = client.from("wallets").select().order("sort_order", ascending: true).execute().value
+            async let assetsTask: [Asset] = client.from("assets").select().order("sort_order", ascending: true).execute().value
+            async let transactionsTask: [Transaction] = client.from("transactions").select().order("date", ascending: false).execute().value
             
-            let wallets: [Wallet] = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
-            self.wallets = wallets
+            let (fetchedCategories, fetchedWallets, fetchedAssets, fetchedTransactions) = try await (categoriesTask, walletsTask, assetsTask, transactionsTask)
             
-            let assets: [Asset] = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
-            self.assets = assets
-            
-            let transactions: [Transaction] = try await client.from("transactions").select().order("date", ascending: false).execute().value
-            self.transactions = transactions
+            self.categories = fetchedCategories
+            self.wallets = fetchedWallets
+            self.assets = fetchedAssets
+            self.transactions = fetchedTransactions
             
             calculateTotals()
+            saveToCache()
             
         } catch {
             print("Error fetching data: \(error)")
@@ -353,6 +385,7 @@ class DataManager: ObservableObject {
     @MainActor
     func reorderWallets(_ wallets: [Wallet]) async {
         self.wallets = wallets
+        saveToCache()
         
         do {
             for (index, wallet) in wallets.enumerated() {
@@ -369,6 +402,7 @@ class DataManager: ObservableObject {
     @MainActor
     func reorderAssets(_ assets: [Asset]) async {
         self.assets = assets
+        saveToCache()
         
         do {
             for (index, asset) in assets.enumerated() {
@@ -401,4 +435,11 @@ struct NoOpAuthLocalStorage: AuthLocalStorage {
     func store(key: String, value: Data) throws {}
     func retrieve(key: String) throws -> Data? { return nil }
     func remove(key: String) throws {}
+}
+
+struct CacheData: Codable {
+    let transactions: [Transaction]
+    let wallets: [Wallet]
+    let assets: [Asset]
+    let categories: [Category]
 }
