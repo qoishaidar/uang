@@ -39,7 +39,6 @@ struct DashboardView: View {
                             }
                             Spacer()
                             
-
                         }
                         .padding(.horizontal)
                         
@@ -90,7 +89,6 @@ struct DashboardView: View {
                     await dataManager.fetchData()
                 }
                 
-                // Floating Action Button
                 VStack {
                     Spacer()
                     HStack {
@@ -104,7 +102,7 @@ struct DashboardView: View {
                                 .shadow(color: Theme.primary.opacity(0.3), radius: 10, x: 0, y: 5)
                         }
                         .padding(.trailing, 24)
-                        .padding(.bottom, isDockVisible ? 90 : 30) // Adjust for tab bar
+                        .padding(.bottom, isDockVisible ? 90 : 30)
                         .animation(.spring(), value: isDockVisible)
                     }
                 }
@@ -171,7 +169,6 @@ struct TotalBalanceCard: View {
         .glassCard()
     }
 }
-
 
 
 struct ExpenseChartView: View {

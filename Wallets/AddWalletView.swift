@@ -24,7 +24,6 @@ struct AddWalletView: View {
                         }
                     }
                     
-
                 }
                 .scrollContentBackground(.hidden)
             }
@@ -70,8 +69,5 @@ struct MaxLengthModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .onChange(of: "") { } // Dummy
     }
 }
-
-

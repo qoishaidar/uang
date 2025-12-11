@@ -42,15 +42,10 @@ struct ContentView: View {
     }
     
     private func showDock() {
-        // Cancel existing task
         hideDockTask?.cancel()
-        
-        // Show dock immediately
         withAnimation {
             isDockVisible = true
         }
-        
-        // Schedule new hide task
         scheduleHideDock()
     }
     

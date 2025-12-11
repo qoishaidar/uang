@@ -44,7 +44,6 @@ struct CategoriesListView: View {
                         CategoryRow(category: category)
                     }
                     .onDelete { indexSet in
-                        // Handle delete for income
                     }
                 }
                 
@@ -53,7 +52,6 @@ struct CategoriesListView: View {
                         CategoryRow(category: category)
                     }
                     .onDelete { indexSet in
-                        // Handle delete for expense
                     }
                 }
             }

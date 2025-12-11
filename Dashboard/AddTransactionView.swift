@@ -10,12 +10,10 @@ struct AddTransactionView: View {
     @State private var selectedCategory: Category?
     @State private var date = Date()
     
-    // For Income/Expense
     @State private var selectedWallet: Wallet?
     @State private var selectedAsset: Asset?
     @State private var accountType: String = "Wallet"
     
-    // For Transfer
     @State private var fromAccountType: String = "Wallet"
     @State private var toAccountType: String = "Wallet"
     @State private var selectedFromWallet: Wallet?

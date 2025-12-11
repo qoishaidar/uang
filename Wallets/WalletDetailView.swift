@@ -18,7 +18,6 @@ struct WalletDetailView: View {
             $0.walletId == wallet.id || $0.fromWalletId == wallet.id || $0.toWalletId == wallet.id
         }
         
-        // Simple filter logic (can be expanded)
         switch selectedFilter {
         case .day:
             return walletTransactions.filter { Calendar.current.isDateInToday($0.date) }
@@ -37,7 +36,6 @@ struct WalletDetailView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
-                    // Card Detail
                     BankCardView(
                         name: wallet.name,
                         balance: wallet.balance,
@@ -49,7 +47,6 @@ struct WalletDetailView: View {
                     .padding(.horizontal)
                     .padding(.top)
                     
-                    // Filters
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(TimeFilter.allCases, id: \.self) { filter in
@@ -66,7 +63,6 @@ struct WalletDetailView: View {
                         .padding(.horizontal)
                     }
                     
-                    // Transactions
                     VStack(alignment: .leading, spacing: 16) {
                         Text("History")
                             .font(.headline)

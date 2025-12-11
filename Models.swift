@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 
-
 struct Transaction: Identifiable, Codable, Hashable {
     let id: Int?
     var walletId: Int?
@@ -38,7 +37,6 @@ struct Transaction: Identifiable, Codable, Hashable {
     }
 }
 
-
 struct Wallet: Identifiable, Codable, Hashable {
     let id: Int?
     var name: String
@@ -59,7 +57,6 @@ struct Wallet: Identifiable, Codable, Hashable {
     }
 }
 
-
 struct Asset: Identifiable, Codable, Hashable {
     let id: Int?
     var name: String
@@ -79,7 +76,6 @@ struct Asset: Identifiable, Codable, Hashable {
         case sortOrder = "sort_order"
     }
 }
-
 
 struct Category: Identifiable, Codable, Hashable {
     let id: String

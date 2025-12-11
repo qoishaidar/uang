@@ -9,7 +9,6 @@ struct AllTransactionsView: View {
             Theme.background.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Custom Navigation Bar
                 HStack {
                     Button(action: { presentationMode.wrappedValue.dismiss() }) {
                         Image(systemName: "chevron.left")
@@ -22,7 +21,6 @@ struct AllTransactionsView: View {
                         .foregroundColor(Theme.textPrimary)
                         .frame(maxWidth: .infinity)
                     
-                    // Invisible button for balance
                     Image(systemName: "chevron.left")
                         .font(.title2)
                         .foregroundColor(.clear)

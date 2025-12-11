@@ -51,7 +51,6 @@ class DataManager: ObservableObject {
         do {
             let _: Transaction = try await client.from("transactions").insert(transaction).select().single().execute().value
             
-            // Update Balance
             if transaction.type == .expense {
                 if let walletId = transaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
                     var wallet = wallets[index]
@@ -77,7 +76,6 @@ class DataManager: ObservableObject {
                     try await client.from("assets").update(asset).eq("id", value: assetId).execute()
                 }
             } else if transaction.type == .transfer {
-                // Decrease from source
                 if let fromWalletId = transaction.fromWalletId, let index = wallets.firstIndex(where: { $0.id == fromWalletId }) {
                     var wallet = wallets[index]
                     wallet.balance -= transaction.amount
@@ -88,8 +86,6 @@ class DataManager: ObservableObject {
                     try await client.from("assets").update(asset).eq("id", value: fromAssetId).execute()
                 }
                 
-                // Increase to destination
-                // Fetch fresh data to ensure we have the latest balance (handling case where source == dest)
                 if let toWalletId = transaction.toWalletId {
                      var wallet: Wallet = try await client.from("wallets").select().eq("id", value: toWalletId).single().execute().value
                      wallet.balance += transaction.amount
@@ -110,7 +106,6 @@ class DataManager: ObservableObject {
     @MainActor
     func deleteTransaction(id: Int) async {
         do {
-            // Get transaction to revert balance
             let transaction: Transaction = try await client.from("transactions").select().eq("id", value: id).single().execute().value
             
             if transaction.type == .expense {
@@ -138,7 +133,6 @@ class DataManager: ObservableObject {
                     try await client.from("assets").update(asset).eq("id", value: assetId).execute()
                 }
             } else if transaction.type == .transfer {
-                // Revert: Increase Source, Decrease Destination
                 if let fromWalletId = transaction.fromWalletId, let index = wallets.firstIndex(where: { $0.id == fromWalletId }) {
                     var wallet = wallets[index]
                     wallet.balance += transaction.amount
@@ -170,14 +164,12 @@ class DataManager: ObservableObject {
     @MainActor
     func updateTransaction(_ transaction: Transaction) async {
         do {
-            // 1. Revert effect of OLD transaction
-            // Fetch the existing transaction from DB to know what to revert
             let oldTransaction: Transaction = try await client.from("transactions").select().eq("id", value: transaction.id!).single().execute().value
             
             if oldTransaction.type == .expense {
                 if let walletId = oldTransaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
                     var wallet = wallets[index]
-                    wallet.balance += oldTransaction.amount // Add back expense
+                    wallet.balance += oldTransaction.amount
                     try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
                 }
                 if let assetId = oldTransaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
@@ -185,10 +177,10 @@ class DataManager: ObservableObject {
                     asset.value += oldTransaction.amount
                     try await client.from("assets").update(asset).eq("id", value: assetId).execute()
                 }
-            } else if oldTransaction.type == .income { // Income
+            } else if oldTransaction.type == .income {
                 if let walletId = oldTransaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
                     var wallet = wallets[index]
-                    wallet.balance -= oldTransaction.amount // Remove income
+                    wallet.balance -= oldTransaction.amount
                     try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
                 }
                 if let assetId = oldTransaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
@@ -197,7 +189,6 @@ class DataManager: ObservableObject {
                     try await client.from("assets").update(asset).eq("id", value: assetId).execute()
                 }
             } else if oldTransaction.type == .transfer {
-                // Revert Transfer: Increase Source, Decrease Destination
                 if let fromWalletId = oldTransaction.fromWalletId {
                     var wallet: Wallet = try await client.from("wallets").select().eq("id", value: fromWalletId).single().execute().value
                     wallet.balance += oldTransaction.amount
@@ -219,11 +210,8 @@ class DataManager: ObservableObject {
                 }
             }
             
-            // 2. Apply effect of NEW transaction
-            
             if transaction.type == .expense {
                 if let walletId = transaction.walletId {
-                    // Fetch latest wallet state
                     var wallet: Wallet = try await client.from("wallets").select().eq("id", value: walletId).single().execute().value
                     wallet.balance -= transaction.amount
                     try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
@@ -233,7 +221,7 @@ class DataManager: ObservableObject {
                     asset.value -= transaction.amount
                     try await client.from("assets").update(asset).eq("id", value: assetId).execute()
                 }
-            } else if transaction.type == .income { // Income
+            } else if transaction.type == .income {
                 if let walletId = transaction.walletId {
                     var wallet: Wallet = try await client.from("wallets").select().eq("id", value: walletId).single().execute().value
                     wallet.balance += transaction.amount
@@ -245,7 +233,6 @@ class DataManager: ObservableObject {
                     try await client.from("assets").update(asset).eq("id", value: assetId).execute()
                 }
             } else if transaction.type == .transfer {
-                // Apply Transfer: Decrease Source, Increase Destination
                 if let fromWalletId = transaction.fromWalletId {
                     var wallet: Wallet = try await client.from("wallets").select().eq("id", value: fromWalletId).single().execute().value
                     wallet.balance -= transaction.amount
@@ -267,7 +254,6 @@ class DataManager: ObservableObject {
                 }
             }
             
-            // 3. Update the transaction itself
             try await client.from("transactions").update(transaction).eq("id", value: transaction.id!).execute()
             
             await fetchData()
@@ -288,20 +274,18 @@ class DataManager: ObservableObject {
     
     @MainActor
     func deleteWallet(id: Int) async {
-        // Optimistic update
         if let index = wallets.firstIndex(where: { $0.id == id }) {
             wallets.remove(at: index)
         }
         
         do {
-            // Delete associated transactions first
             try await client.from("transactions").delete().eq("wallet_id", value: id).execute()
             
             try await client.from("wallets").delete().eq("id", value: id).execute()
             await fetchData()
         } catch {
             print("Error deleting wallet: \(error)")
-            await fetchData() // Re-fetch if failed
+            await fetchData()
         }
     }
     
@@ -317,20 +301,18 @@ class DataManager: ObservableObject {
     
     @MainActor
     func deleteAsset(id: Int) async {
-        // Optimistic update
         if let index = assets.firstIndex(where: { $0.id == id }) {
             assets.remove(at: index)
         }
         
         do {
-            // Delete associated transactions first
             try await client.from("transactions").delete().eq("asset_id", value: id).execute()
             
             try await client.from("assets").delete().eq("id", value: id).execute()
             await fetchData()
         } catch {
             print("Error deleting asset: \(error)")
-            await fetchData() // Re-fetch if failed
+            await fetchData()
         }
     }
     

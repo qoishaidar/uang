@@ -18,7 +18,6 @@ struct AssetListView: View {
                 Theme.background.ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header & Total Value (Fixed at top)
                     VStack(spacing: 24) {
                         HStack {
                             Text("Assets")
@@ -65,7 +64,6 @@ struct AssetListView: View {
                     .padding(.top)
                     .padding(.bottom, 16)
                     
-                    // Asset List
                     List {
                         ForEach(dataManager.assets) { asset in
                             ZStack {
@@ -77,7 +75,7 @@ struct AssetListView: View {
                                 BankCardView(
                                     name: asset.name,
                                     balance: asset.value,
-                                    color: "#1E1E1E", // Dark card for assets
+                                    color: "#1E1E1E",
                                     last4: asset.symbol,
                                     type: asset.type,
                                     isHidden: dataManager.isAmountHidden
@@ -213,7 +211,7 @@ struct EditAssetView: View {
         var updatedAsset = asset
         updatedAsset.name = name
         updatedAsset.type = type
-        updatedAsset.symbol = name.prefix(3).uppercased() // Update symbol if name changes
+        updatedAsset.symbol = name.prefix(3).uppercased()
         
         Task {
             await dataManager.updateAsset(updatedAsset)

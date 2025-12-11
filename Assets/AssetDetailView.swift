@@ -36,7 +36,6 @@ struct AssetDetailView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
-                    // Card Detail
                     BankCardView(
                         name: asset.name,
                         balance: asset.value,
@@ -48,7 +47,6 @@ struct AssetDetailView: View {
                     .padding(.horizontal)
                     .padding(.top)
                     
-                    // Filters
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(TimeFilter.allCases, id: \.self) { filter in
@@ -65,7 +63,6 @@ struct AssetDetailView: View {
                         .padding(.horizontal)
                     }
                     
-                    // Transactions
                     VStack(alignment: .leading, spacing: 16) {
                         Text("History")
                             .font(.headline)
