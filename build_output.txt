@@ -1,0 +1,373 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme uang -destination "generic/platform=iOS Simulator" build
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  swift-clocks: https://github.com/pointfreeco/swift-clocks @ 1.0.6
+  swift-asn1: https://github.com/apple/swift-asn1.git @ 1.5.1
+  xctest-dynamic-overlay: https://github.com/pointfreeco/xctest-dynamic-overlay @ 1.8.0
+  swift-crypto: https://github.com/apple/swift-crypto.git @ 4.2.0
+  swift-http-types: https://github.com/apple/swift-http-types.git @ 1.5.1
+  Supabase: https://github.com/supabase/supabase-swift @ 2.38.0
+  swift-concurrency-extras: https://github.com/pointfreeco/swift-concurrency-extras @ 1.3.2
+
+2025-12-12 01:13:16.604 xcodebuild[65879:32204157] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (28 targets)
+    Target 'uang' in project 'uang'
+        ➜ Explicit dependency on target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'Supabase' in project 'Supabase'
+        ➜ Explicit dependency on target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'Realtime' in project 'Supabase'
+    Target 'Realtime' in project 'Supabase'
+        ➜ Explicit dependency on target 'Realtime' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+    Target 'Supabase' in project 'Supabase'
+        ➜ Explicit dependency on target 'Supabase' in project 'Supabase'
+        ➜ Explicit dependency on target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Realtime' in project 'Supabase'
+        ➜ Explicit dependency on target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Supabase' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'Realtime' in project 'Supabase'
+        ➜ Explicit dependency on target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'Realtime' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+    Target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'swift-crypto_Crypto' in project 'swift-crypto'
+    Target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'swift-crypto_Crypto' in project 'swift-crypto'
+    Target 'swift-crypto_Crypto' in project 'swift-crypto' (no dependencies)
+    Target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+    Target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+    Target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay' (no dependencies)
+    Target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+    Target 'HTTPTypes' in project 'swift-http-types' (no dependencies)
+    Target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+    Target 'ConcurrencyExtras' in project 'swift-concurrency-extras' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/uang/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ReadFileContents /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/docc/features.json
+
+Build description signature: 5fc1e0e505e9541a500ab11436d85c56
+Build description path: /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/XCBuildData/5fc1e0e505e9541a500ab11436d85c56.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk /Users/qoishaidar/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/uang.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -o /Users/qoishaidar/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache
+
+ProcessInfoPlistFile /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/swift-crypto_Crypto.bundle/Info.plist /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/swift-crypto.build/Debug-iphonesimulator/swift-crypto_Crypto.build/empty-swift-crypto_Crypto.plist (in target 'swift-crypto_Crypto' from project 'swift-crypto')
+    cd /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/SourcePackages/checkouts/swift-crypto
+    builtin-infoPlistUtility /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/swift-crypto.build/Debug-iphonesimulator/swift-crypto_Crypto.build/empty-swift-crypto_Crypto.plist -producttype com.apple.product-type.bundle -expandbuildsettings -format binary -platform iphonesimulator -o /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/swift-crypto_Crypto.bundle/Info.plist
+
+ProcessProductPackaging "" /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang.app-Simulated.xcent (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+    Entitlements:
+    
+    {
+    "application-identifier" = "P397QM8B95.SWS.uang";
+}
+    
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang.app-Simulated.xcent
+
+ProcessProductPackagingDER /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang.app-Simulated.xcent /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang.app-Simulated.xcent.der (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    /usr/bin/derq query -f xml -i /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang.app-Simulated.xcent -o /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang.app-Simulated.xcent.der --raw
+
+CompileAssetCatalogVariant thinned /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/uang.app /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/uang/Assets.xcassets (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/uang/Assets.xcassets --compile /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 26.0 --platform iphonesimulator
+
+SwiftDriver uang normal arm64 com.apple.xcode.tools.swift.compiler (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name uang -Onone -enforce-exclusivity\=checked @/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/uang.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -target arm64-apple-ios26.0-simulator -g -module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64 -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache -output-file-map /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/uang-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/uang.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/uang_const_extract_protocols.json -Xcc -iquote -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-generated-files.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-own-target-headers.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang-ebe89b8cf7b027598bd17ad7b2444513-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-project-headers.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources-normal/arm64 -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources/arm64 -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/uang-Swift.h -import-objc-header /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/uang-Bridging-Header.h -working-directory /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver uang normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name uang -Onone -enforce-exclusivity\=checked @/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -target x86_64-apple-ios26.0-simulator -g -module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64 -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache -output-file-map /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang_const_extract_protocols.json -Xcc -iquote -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-generated-files.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-own-target-headers.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang-ebe89b8cf7b027598bd17ad7b2444513-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-project-headers.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources-normal/x86_64 -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources/x86_64 -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang-Swift.h -import-objc-header /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/uang-Bridging-Header.h -working-directory /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang -experimental-emit-module-separately -disable-cmo
+
+SwiftGeneratePch normal arm64 Compiling\ bridging\ header (in target 'uang' from project 'uang')
+
+SwiftGeneratePch normal x86_64 Compiling\ bridging\ header (in target 'uang' from project 'uang')
+
+SwiftDriverJobDiscovery normal arm64 Compiling bridging header (in target 'uang' from project 'uang')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling bridging header (in target 'uang' from project 'uang')
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ uang (in target 'uang' from project 'uang')
+
+EmitSwiftModule normal arm64 (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal arm64 Compiling\ Config.swift,\ AddAssetView.swift,\ WalletDetailView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Config.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Assets/AddAssetView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/WalletDetailView.swift (in target 'uang' from project 'uang')
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Config.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Assets/AddAssetView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/WalletDetailView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 Compiling\ Config.swift,\ AddAssetView.swift,\ WalletDetailView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Config.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Assets/AddAssetView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/WalletDetailView.swift (in target 'uang' from project 'uang')
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Config.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Assets/AddAssetView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/WalletDetailView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 Compiling\ AddWalletView.swift,\ AddTransactionView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/AddWalletView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/AddTransactionView.swift (in target 'uang' from project 'uang')
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/AddWalletView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/AddTransactionView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal arm64 Compiling\ SettingsView.swift,\ DashboardView.swift,\ BankCardView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Settings/SettingsView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Shared/BankCardView.swift (in target 'uang' from project 'uang')
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Theme.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/DataManager.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/ExpenseApp.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Assets/AssetListView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/ContentView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/WalletListView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Config.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Assets/AddAssetView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/WalletDetailView.swift -primary-file /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Settings/SettingsView.swift -primary-file /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift -primary-file /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Shared/BankCardView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Wallets/AddWalletView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/AddTransactionView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/CustomDockView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/AllTransactionsView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Assets/AssetDetailView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Models.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Shared/ThemeManager.swift /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources/GeneratedAssetSymbols.swift -supplementary-output-file-map /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/supplementaryOutputs-8 -emit-localized-strings -emit-localized-strings-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64 -target arm64-apple-ios26.0-simulator -module-can-import-version DeveloperToolsSupport 23.0.4 23.0.4 -module-can-import-version SwiftUI 7.1.13.1 7.1.13 -module-can-import-version UIKit 9126.1.12.1 9126.1.12 -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/uang-dependencies-2.json -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -I /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -profile-generate -profile-coverage-mapping -swift-version 5 -enforce-exclusivity\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/uang_const_extract_protocols.json -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -default-isolation\=MainActor -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang -enable-anonymous-context-mangled-names -file-compilation-dir /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-generated-files.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-own-target-headers.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang-ebe89b8cf7b027598bd17ad7b2444513-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-project-headers.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources-normal/arm64 -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources/arm64 -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources -Xcc -DDEBUG\=1 -import-objc-header /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/uang-primary-Bridging-header.pch -no-auto-bridging-header-chaining -module-name uang -frontend-parseable-output -disable-clang-spi -target-sdk-version 26.1 -target-sdk-name iphonesimulator26.1 -clang-target arm64-apple-ios26.1-simulator -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/SettingsView.o -o /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/DashboardView.o -o /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/BankCardView.o -index-unit-output-path /uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/SettingsView.o -index-unit-output-path /uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/DashboardView.o -index-unit-output-path /uang.build/Debug-iphonesimulator/uang.build/Objects-normal/arm64/BankCardView.o -index-store-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Settings/SettingsView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+/Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift:32:63: error: cannot convert value of type 'Binding<Subject>' to expected argument type 'Double'
+                        TotalBalanceCard(balance: dataManager.totalBalance, income: dataManager.totalIncome, expense: dataManager.totalExpense, isHidden: dataManager.isAmountHidden)
+                                                              ^
+/Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift:32:97: error: cannot convert value of type 'Binding<Subject>' to expected argument type 'Double'
+                        TotalBalanceCard(balance: dataManager.totalBalance, income: dataManager.totalIncome, expense: dataManager.totalExpense, isHidden: dataManager.isAmountHidden)
+                                                                                                ^
+/Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift:32:63: error: value of type 'DataManager' has no dynamic member 'totalBalance' using key path from root type 'DataManager'
+                        TotalBalanceCard(balance: dataManager.totalBalance, income: dataManager.totalIncome, expense: dataManager.totalExpense, isHidden: dataManager.isAmountHidden)
+                                                  ~~~~~~~~~~~ ^~~~~~~~~~~~
+/Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift:32:51: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<DataManager>.Wrapper'
+                        TotalBalanceCard(balance: dataManager.totalBalance, income: dataManager.totalIncome, expense: dataManager.totalExpense, isHidden: dataManager.isAmountHidden)
+                                                  ^
+                                                  $
+/Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift:32:97: error: value of type 'DataManager' has no dynamic member 'totalIncome' using key path from root type 'DataManager'
+                        TotalBalanceCard(balance: dataManager.totalBalance, income: dataManager.totalIncome, expense: dataManager.totalExpense, isHidden: dataManager.isAmountHidden)
+                                                                                    ~~~~~~~~~~~ ^~~~~~~~~~~
+/Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift:32:85: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<DataManager>.Wrapper'
+                        TotalBalanceCard(balance: dataManager.totalBalance, income: dataManager.totalIncome, expense: dataManager.totalExpense, isHidden: dataManager.isAmountHidden)
+                                                                                    ^
+                                                                                    $
+
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Shared/BankCardView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ uang (in target 'uang' from project 'uang')
+
+EmitSwiftModule normal x86_64 (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 Compiling\ SettingsView.swift,\ DashboardView.swift,\ BankCardView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Settings/SettingsView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Shared/BankCardView.swift (in target 'uang' from project 'uang')
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Settings/SettingsView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Shared/BankCardView.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 Compiling\ Theme.swift,\ DataManager.swift,\ ExpenseApp.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Theme.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/DataManager.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/ExpenseApp.swift (in target 'uang' from project 'uang')
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Theme.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/DataManager.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal x86_64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/ExpenseApp.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal arm64 Compiling\ Theme.swift,\ DataManager.swift,\ ExpenseApp.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Theme.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/DataManager.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/ExpenseApp.swift (in target 'uang' from project 'uang')
+
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Theme.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/DataManager.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/ExpenseApp.swift (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for uang (in target 'uang' from project 'uang')
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for uang (in target 'uang' from project 'uang')
+
+SwiftDriver\ Compilation\ Requirements uang normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'uang' from project 'uang')
+    cd /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name uang -Onone -enforce-exclusivity\=checked @/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.1.sdk -target x86_64-apple-ios26.0-simulator -g -module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64 -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.1-23B77-90cf18a4295e390e64c810bc6bd7acbc.sdkstatcache -output-file-map /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/qoishaidar/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang_const_extract_protocols.json -Xcc -iquote -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-generated-files.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-own-target-headers.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang-ebe89b8cf7b027598bd17ad7b2444513-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/uang-project-headers.hmap -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources-normal/x86_64 -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources/x86_64 -Xcc -I/Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/qoishaidar/Library/Developer/Xcode/DerivedData/uang-eoohwrqylpxnbmamhtqtfrodayvg/Build/Intermediates.noindex/uang.build/Debug-iphonesimulator/uang.build/Objects-normal/x86_64/uang-Swift.h -import-objc-header /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/uang-Bridging-Header.h -working-directory /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang -experimental-emit-module-separately -disable-cmo
+
+** BUILD FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ SettingsView.swift,\ DashboardView.swift,\ BankCardView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Settings/SettingsView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Shared/BankCardView.swift (in target 'uang' from project 'uang')
+	SwiftCompile normal arm64 /Users/qoishaidar/Documents/Docs/Macbook/myapp/uang/Dashboard/DashboardView.swift (in target 'uang' from project 'uang')
+	Building project uang with scheme uang
+(3 failures)
