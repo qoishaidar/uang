@@ -31,6 +31,7 @@
 		B0BBE84B2EE70ECE00E3051A /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE84A2EE70ECE00E3051A /* AddTransactionView.swift */; };
 		B0BBE84D2EE7147300E3051A /* CustomDockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE84C2EE7147300E3051A /* CustomDockView.swift */; };
 		B0BBE9012EE7200000E3051A /* AllTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE9002EE7200000E3051A /* AllTransactionsView.swift */; };
+		B0BBE9112EE7200000E3051A /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE9102EE7200000E3051A /* ThemeManager.swift */; };
 
 /* End PBXBuildFile section */
 
@@ -74,6 +75,7 @@
 		B0BBE84A2EE70ECE00E3051A /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
 		B0BBE84C2EE7147300E3051A /* CustomDockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDockView.swift; sourceTree = "<group>"; };
 		B0BBE9002EE7200000E3051A /* AllTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllTransactionsView.swift; sourceTree = "<group>"; };
+		B0BBE9102EE7200000E3051A /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 
 /* End PBXFileReference section */
 
@@ -193,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				B0BBE8292EE706AA00E3051A /* BankCardView.swift */,
+				B0BBE9102EE7200000E3051A /* ThemeManager.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -387,6 +390,7 @@
 				B0BBE9012EE7200000E3051A /* AllTransactionsView.swift in Sources */,
 				B0BBE8352EE706AA00E3051A /* AssetDetailView.swift in Sources */,
 				B0BBE81C2EE7066800E3051A /* Models.swift in Sources */,
+				B0BBE9112EE7200000E3051A /* ThemeManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

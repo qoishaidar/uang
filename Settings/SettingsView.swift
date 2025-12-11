@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var dataManager = DataManager.shared
+    @ObservedObject var themeManager = ThemeManager.shared
     @State private var showingAddCategory = false
     
     var body: some View {
@@ -19,6 +20,16 @@ struct SettingsView: View {
                                     .foregroundColor(Theme.textPrimary)
                             }
                         }
+                        .listRowBackground(Theme.cardBackground)
+                    }
+                    
+                    Section(header: Text("Appearance").foregroundColor(Theme.textSecondary)) {
+                        Picker("Theme", selection: $themeManager.currentTheme) {
+                            ForEach(AppTheme.allCases) { theme in
+                                Text(theme.rawValue).tag(theme)
+                            }
+                        }
+                        .pickerStyle(.menu)
                         .listRowBackground(Theme.cardBackground)
                     }
                 }
