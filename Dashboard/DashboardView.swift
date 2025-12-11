@@ -224,7 +224,11 @@ struct ExpenseChartView: View {
                     Divider()
                         .background(Color.primary.opacity(0.2))
                     
-                    Button(action: { withAnimation { showDetails.toggle() } }) {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                            showDetails.toggle()
+                        }
+                    }) {
                         HStack {
                             Text(showDetails ? "Hide Details" : "Show Details")
                                 .font(.subheadline)
@@ -255,7 +259,7 @@ struct ExpenseChartView: View {
                                 }
                             }
                         }
-                        .transition(.opacity.combined(with: .move(edge: .top)))
+                        .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .top)))
                     }
                 }
             }
