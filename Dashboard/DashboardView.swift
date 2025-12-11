@@ -4,6 +4,7 @@ import Charts
 struct DashboardView: View {
     @ObservedObject var dataManager = DataManager.shared
     @State private var showingAddTransaction = false
+    var isDockVisible: Bool = true
     
     var totalBalance: Double {
         let walletTotal = dataManager.wallets.reduce(0) { $0 + $1.balance }
@@ -45,13 +46,6 @@ struct DashboardView: View {
                             }) {
                                 Image(systemName: dataManager.isAmountHidden ? "lock.fill" : "lock.open.fill")
                                     .font(.title2)
-                                    .foregroundColor(Theme.textPrimary)
-                            }
-                            .padding(.trailing, 8)
-                            
-                            Button(action: { showingAddTransaction = true }) {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(.title)
                                     .foregroundColor(Theme.textPrimary)
                             }
                         }
@@ -97,6 +91,25 @@ struct DashboardView: View {
                 }
                 .refreshable {
                     await dataManager.fetchData()
+                }
+                
+                // Floating Action Button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: { showingAddTransaction = true }) {
+                            Image(systemName: "plus")
+                                .font(.title.weight(.semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 56, height: 56)
+                                .background(Circle().fill(Theme.primary))
+                                .shadow(color: Theme.primary.opacity(0.3), radius: 10, x: 0, y: 5)
+                        }
+                        .padding(.trailing, 24)
+                        .padding(.bottom, isDockVisible ? 90 : 30) // Adjust for tab bar
+                        .animation(.spring(), value: isDockVisible)
+                    }
                 }
             }
             .navigationBarHidden(true)

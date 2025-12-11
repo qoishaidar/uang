@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct WalletListView: View {
+    @Environment(\.editMode) private var editMode
     @ObservedObject var dataManager = DataManager.shared
     @State private var walletToEdit: Wallet?
     @State private var walletToDelete: Wallet?
@@ -24,7 +25,19 @@ struct WalletListView: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(Theme.textPrimary)
                             Spacer()
-                            EditButton()
+                            Button(action: {
+                                withAnimation {
+                                    if editMode?.wrappedValue == .active {
+                                        editMode?.wrappedValue = .inactive
+                                    } else {
+                                        editMode?.wrappedValue = .active
+                                    }
+                                }
+                            }) {
+                                Image(systemName: editMode?.wrappedValue == .active ? "checkmark.circle.fill" : "pencil.circle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(Theme.textPrimary)
+                            }
                                 .padding(.trailing, 8)
                             Button(action: { showingAddWallet = true }) {
                                 Image(systemName: "plus.circle.fill")

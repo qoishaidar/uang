@@ -12,7 +12,7 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                DashboardView()
+                DashboardView(isDockVisible: isDockVisible)
                     .tag(CustomDockView.Tab.dashboard)
                 
                 WalletListView()
