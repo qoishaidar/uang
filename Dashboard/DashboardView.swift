@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import UIKit
 
 struct DashboardView: View {
     @ObservedObject var dataManager = DataManager.shared
@@ -93,7 +94,11 @@ struct DashboardView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        Button(action: { showingAddTransaction = true }) {
+                        Button(action: {
+                            let generator = UIImpactFeedbackGenerator(style: .medium)
+                            generator.impactOccurred()
+                            showingAddTransaction = true
+                        }) {
                             Image(systemName: "plus")
                                 .font(.title.weight(.semibold))
                                 .foregroundColor(.white)
