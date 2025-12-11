@@ -7,20 +7,6 @@ struct DashboardView: View {
     @State private var showingAddTransaction = false
     var isDockVisible: Bool = true
     
-    var totalBalance: Double {
-        let walletTotal = dataManager.wallets.reduce(0) { $0 + $1.balance }
-        let assetTotal = dataManager.assets.reduce(0) { $0 + $1.value }
-        return walletTotal + assetTotal
-    }
-    
-    var income: Double {
-        dataManager.transactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
-    }
-    
-    var expense: Double {
-        dataManager.transactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
-    }
-    
     var body: some View {
         NavigationView {
             ZStack {
@@ -43,7 +29,7 @@ struct DashboardView: View {
                         }
                         .padding(.horizontal)
                         
-                        TotalBalanceCard(balance: totalBalance, income: income, expense: expense, isHidden: dataManager.isAmountHidden)
+                        TotalBalanceCard(balance: dataManager.totalBalance, income: dataManager.totalIncome, expense: dataManager.totalExpense, isHidden: dataManager.isAmountHidden)
                             .padding(.horizontal)
                             .onTapGesture {
                                 withAnimation {
@@ -96,6 +82,7 @@ struct DashboardView: View {
                         Spacer()
                         Button(action: {
                             let generator = UIImpactFeedbackGenerator(style: .medium)
+                            generator.prepare()
                             generator.impactOccurred()
                             showingAddTransaction = true
                         }) {
@@ -106,6 +93,7 @@ struct DashboardView: View {
                                 .background(Circle().fill(Theme.primary))
                                 .shadow(color: Theme.primary.opacity(0.3), radius: 10, x: 0, y: 5)
                         }
+                        .buttonStyle(ScaleButtonStyle())
                         .padding(.trailing, 24)
                         .padding(.bottom, isDockVisible ? 90 : 30)
                         .animation(.spring(), value: isDockVisible)

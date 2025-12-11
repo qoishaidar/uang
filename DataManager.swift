@@ -19,6 +19,9 @@ class DataManager: ObservableObject {
     @Published var assets: [Asset] = []
     @Published var categories: [Category] = []
     @Published var isAmountHidden: Bool = false
+    @Published var totalBalance: Double = 0
+    @Published var totalIncome: Double = 0
+    @Published var totalExpense: Double = 0
     
     init() {
         Task {
@@ -41,9 +44,20 @@ class DataManager: ObservableObject {
             let transactions: [Transaction] = try await client.from("transactions").select().order("date", ascending: false).execute().value
             self.transactions = transactions
             
+            calculateTotals()
+            
         } catch {
             print("Error fetching data: \(error)")
         }
+    }
+    
+    private func calculateTotals() {
+        let walletTotal = wallets.reduce(0) { $0 + $1.balance }
+        let assetTotal = assets.reduce(0) { $0 + $1.value }
+        self.totalBalance = walletTotal + assetTotal
+        
+        self.totalIncome = transactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
+        self.totalExpense = transactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
     }
     
     @MainActor
