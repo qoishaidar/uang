@@ -63,8 +63,8 @@ struct DashboardView: View {
                                 Spacer()
                                 NavigationLink(destination: AllTransactionsView()) {
                                     Text("View All")
-                                        .foregroundColor(Theme.textSecondary)
                                         .font(.subheadline)
+                                        .foregroundColor(Theme.primary)
                                 }
                             }
                             

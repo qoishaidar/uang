@@ -30,7 +30,8 @@
 		B0BBE8492EE70E1700E3051A /* AddWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE8482EE70E1700E3051A /* AddWalletView.swift */; };
 		B0BBE84B2EE70ECE00E3051A /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE84A2EE70ECE00E3051A /* AddTransactionView.swift */; };
 		B0BBE84D2EE7147300E3051A /* CustomDockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE84C2EE7147300E3051A /* CustomDockView.swift */; };
-		B0BBE84F2EE71AAF00E3051A /* AllTransactionsView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE84E2EE71AAF00E3051A /* AllTransactionsView 2.swift */; };
+		B0BBE9012EE7200000E3051A /* AllTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BBE9002EE7200000E3051A /* AllTransactionsView.swift */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,7 +73,8 @@
 		B0BBE8482EE70E1700E3051A /* AddWalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWalletView.swift; sourceTree = "<group>"; };
 		B0BBE84A2EE70ECE00E3051A /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
 		B0BBE84C2EE7147300E3051A /* CustomDockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDockView.swift; sourceTree = "<group>"; };
-		B0BBE84E2EE71AAF00E3051A /* AllTransactionsView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllTransactionsView 2.swift"; sourceTree = "<group>"; };
+		B0BBE9002EE7200000E3051A /* AllTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllTransactionsView.swift; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -173,7 +175,8 @@
 			children = (
 				B0BBE84A2EE70ECE00E3051A /* AddTransactionView.swift */,
 				B0BBE8252EE706AA00E3051A /* DashboardView.swift */,
-				B0BBE84E2EE71AAF00E3051A /* AllTransactionsView 2.swift */,
+				B0BBE9002EE7200000E3051A /* AllTransactionsView.swift */,
+
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -366,7 +369,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B0BBE81E2EE7067A00E3051A /* Theme.swift in Sources */,
-				B0BBE84F2EE71AAF00E3051A /* AllTransactionsView 2.swift in Sources */,
+
 				B0BBE8202EE7068600E3051A /* DataManager.swift in Sources */,
 				B0BBE8192EE7063E00E3051A /* ExpenseApp.swift in Sources */,
 				B0BBE82E2EE706AA00E3051A /* AssetListView.swift in Sources */,
@@ -381,6 +384,7 @@
 				B0BBE8492EE70E1700E3051A /* AddWalletView.swift in Sources */,
 				B0BBE84B2EE70ECE00E3051A /* AddTransactionView.swift in Sources */,
 				B0BBE84D2EE7147300E3051A /* CustomDockView.swift in Sources */,
+				B0BBE9012EE7200000E3051A /* AllTransactionsView.swift in Sources */,
 				B0BBE8352EE706AA00E3051A /* AssetDetailView.swift in Sources */,
 				B0BBE81C2EE7066800E3051A /* Models.swift in Sources */,
 			);

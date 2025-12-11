@@ -45,16 +45,21 @@ struct AllTransactionsView: View {
                             }
                         }
                     }
+                    
+                    Color.clear
+                        .frame(height: 140)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
                 }
                 .listStyle(.plain)
                 .refreshable {
                     await dataManager.fetchData()
                 }
-                .padding(.bottom, 140) // Space for dock
             }
         }
         .navigationBarHidden(true)
-        .highPriorityGesture(
+        .simultaneousGesture(
             DragGesture()
                 .onEnded { value in
                     if value.translation.width > 100 {
