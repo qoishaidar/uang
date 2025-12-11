@@ -39,20 +39,17 @@ struct DashboardView: View {
                             }
                             Spacer()
                             
-                            Button(action: {
-                                withAnimation {
-                                    dataManager.isAmountHidden.toggle()
-                                }
-                            }) {
-                                Image(systemName: dataManager.isAmountHidden ? "lock.fill" : "lock.open.fill")
-                                    .font(.title2)
-                                    .foregroundColor(Theme.textPrimary)
-                            }
+
                         }
                         .padding(.horizontal)
                         
                         TotalBalanceCard(balance: totalBalance, income: income, expense: expense, isHidden: dataManager.isAmountHidden)
                             .padding(.horizontal)
+                            .onTapGesture {
+                                withAnimation {
+                                    dataManager.isAmountHidden.toggle()
+                                }
+                            }
                         
                         ExpenseChartView(transactions: dataManager.transactions, isHidden: dataManager.isAmountHidden)
                             .padding(.horizontal)
