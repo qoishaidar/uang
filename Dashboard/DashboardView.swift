@@ -43,7 +43,7 @@ struct DashboardView: View {
                                     dataManager.isAmountHidden.toggle()
                                 }
                             }) {
-                                Image(systemName: dataManager.isAmountHidden ? "eye.slash.fill" : "eye.fill")
+                                Image(systemName: dataManager.isAmountHidden ? "lock.fill" : "lock.open.fill")
                                     .font(.title2)
                                     .foregroundColor(Theme.textPrimary)
                             }
@@ -271,7 +271,7 @@ struct TransactionRow: View {
                 Text(transaction.category)
                     .font(.headline)
                     .foregroundColor(Theme.textPrimary)
-                Text(transaction.date.formatted(date: .abbreviated, time: .shortened))
+                Text("\(transaction.date.formatted(date: .abbreviated, time: .omitted)) • \(transaction.title)")
                     .font(.caption)
                     .foregroundColor(Theme.textSecondary)
             }
