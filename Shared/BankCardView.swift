@@ -10,40 +10,15 @@ struct BankCardView: View {
     
     var body: some View {
         ZStack(alignment: .leading) {
-            GeometryReader { proxy in
-                ZStack {
-                    Color(hex: color)
-                    AngularGradient(
-                        gradient: Gradient(colors: [
-                            Color.white.opacity(0.1),
-                            Color.white.opacity(0.05),
-                            Color.clear,
-                            Color.black.opacity(0.1),
-                            Color.white.opacity(0.05)
-                        ]),
-                        center: .center,
-                        angle: .degrees(45)
-                    )
-                    .blur(radius: 10)
-                    
-                    Rectangle()
-                        .fill(Color.white.opacity(0.05))
-                        .blendMode(.overlay)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .shadow(color: Color(hex: color).opacity(0.3), radius: 8, x: 0, y: 4)
-            
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(name)
                         .font(.system(size: 16, weight: .medium, design: .rounded))
-                        .foregroundColor(.white.opacity(0.9))
+                        .foregroundColor(Theme.textSecondary)
                     
                     Text(balance.formatted(.currency(code: "IDR")))
                         .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
+                        .foregroundColor(Theme.textPrimary)
                         .hideAmount(if: isHidden)
                 }
                 
@@ -54,13 +29,14 @@ struct BankCardView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.black.opacity(0.2))
+                    .background(Theme.primary)
                     .clipShape(Capsule())
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
         }
         .frame(height: 100)
+        .glassCard()
     }
 }
 
