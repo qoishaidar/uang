@@ -214,7 +214,6 @@ struct EditWalletView: View {
         var updatedWallet = wallet
         updatedWallet.name = name
         updatedWallet.type = type
-
         updatedWallet.color = color
         
         Task {

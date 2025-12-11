@@ -23,7 +23,6 @@ struct AddWalletView: View {
                             }
                         }
                     }
-                    
                 }
                 .scrollContentBackground(.hidden)
             }

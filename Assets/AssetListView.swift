@@ -212,7 +212,6 @@ struct EditAssetView: View {
         updatedAsset.name = name
         updatedAsset.type = type
         updatedAsset.symbol = name.prefix(3).uppercased()
-        
         Task {
             await dataManager.updateAsset(updatedAsset)
             presentationMode.wrappedValue.dismiss()
