@@ -54,8 +54,8 @@ struct AssetDetailView: View {
                                     Text(filter.rawValue)
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
-                                        .background(selectedFilter == filter ? Color.white : Color.white.opacity(0.1))
-                                        .foregroundColor(selectedFilter == filter ? .black : .white)
+                                        .background(selectedFilter == filter ? Theme.primary : Theme.textPrimary.opacity(0.1))
+                                        .foregroundColor(selectedFilter == filter ? .white : Theme.textPrimary)
                                         .cornerRadius(20)
                                 }
                             }
