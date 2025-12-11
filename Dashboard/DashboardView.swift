@@ -168,10 +168,37 @@ struct ExpenseChartView: View {
     let transactions: [Transaction]
     var isHidden: Bool
     @State private var showDetails = false
+    @State private var selectedTimeFilter: TimeFilter = .all
+    
+    enum TimeFilter: String, CaseIterable, Identifiable {
+        case day = "Day"
+        case month = "Month"
+        case year = "Year"
+        case all = "All"
+        
+        var id: String { self.rawValue }
+    }
     
     var aggregatedExpenses: [(category: String, amount: Double, color: Color)] {
-        let expenses = transactions.filter { $0.type == .expense }
-        let grouped = Dictionary(grouping: expenses, by: { $0.category })
+        let filteredTransactions = transactions.filter { transaction in
+            guard transaction.type == .expense else { return false }
+            
+            let calendar = Calendar.current
+            let now = Date()
+            
+            switch selectedTimeFilter {
+            case .day:
+                return calendar.isDateInToday(transaction.date)
+            case .month:
+                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .month)
+            case .year:
+                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .year)
+            case .all:
+                return true
+            }
+        }
+        
+        let grouped = Dictionary(grouping: filteredTransactions, by: { $0.category })
         let sorted = grouped.map { category, transactions in
             (category: category, amount: abs(transactions.reduce(0) { $0 + $1.amount }))
         }.sorted { $0.amount > $1.amount }
@@ -185,12 +212,46 @@ struct ExpenseChartView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("Expenses Breakdown")
-                .font(.headline)
-                .foregroundColor(Theme.textPrimary)
+            HStack {
+                Text("Expenses Breakdown")
+                    .font(.headline)
+                    .foregroundColor(Theme.textPrimary)
+                
+                Spacer()
+                
+                Menu {
+                    ForEach(TimeFilter.allCases) { filter in
+                        Button(action: {
+                            withAnimation {
+                                selectedTimeFilter = filter
+                            }
+                        }) {
+                            HStack {
+                                Text(filter.rawValue)
+                                if selectedTimeFilter == filter {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(selectedTimeFilter.rawValue)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        Image(systemName: "chevron.down")
+                            .font(.caption)
+                    }
+                    .foregroundColor(Theme.primary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Theme.primary.opacity(0.1))
+                    .cornerRadius(20)
+                }
+            }
             
             if aggregatedExpenses.isEmpty {
-                Text("No expenses yet")
+                Text("No expenses for this period")
                     .font(.subheadline)
                     .foregroundColor(Theme.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .center)
