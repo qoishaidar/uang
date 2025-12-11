@@ -10,7 +10,7 @@ class DataManager: ObservableObject {
         supabaseURL: URL(string: Config.supabaseUrl)!,
         supabaseKey: Config.supabaseKey,
         options: SupabaseClientOptions(
-            auth: .init(storage: NoOpAuthLocalStorage())
+            auth: .init(storage: NoOpAuthLocalStorage(), autoRefreshToken: false)
         )
     )
     

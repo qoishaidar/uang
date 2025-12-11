@@ -33,7 +33,7 @@ struct ContentView: View {
         }
         .ignoresSafeArea(.keyboard)
         .ignoresSafeArea(.container, edges: .bottom)
-        .onChange(of: selectedTab) { _ in
+        .onChange(of: selectedTab) {
             showDock()
         }
         .onAppear {
