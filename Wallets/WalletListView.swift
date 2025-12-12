@@ -7,6 +7,7 @@ struct WalletListView: View {
     @State private var walletToDelete: Wallet?
     @State private var showingDeleteAlert = false
     @State private var showingAddWallet = false
+    @State private var selectedWallet: Wallet?
     
     var totalWalletBalance: Double {
         dataManager.wallets.reduce(0) { $0 + $1.balance }
@@ -67,7 +68,9 @@ struct WalletListView: View {
                     List {
                         ForEach(dataManager.wallets) { wallet in
                             ZStack {
-                                NavigationLink(destination: WalletDetailView(wallet: wallet)) {
+                                Button {
+                                    selectedWallet = wallet
+                                } label: {
                                     EmptyView()
                                 }
                                 .opacity(0)
@@ -127,6 +130,18 @@ struct WalletListView: View {
             }
             .sheet(item: $walletToEdit) { wallet in
                 EditWalletView(wallet: wallet)
+            }
+            .sheet(item: $selectedWallet) { wallet in
+                NavigationView {
+                    WalletDetailView(wallet: wallet)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Done") {
+                                    selectedWallet = nil
+                                }
+                            }
+                        }
+                }
             }
             .alert("Delete Wallet", isPresented: $showingDeleteAlert, presenting: walletToDelete) { wallet in
                 Button("Delete", role: .destructive) {

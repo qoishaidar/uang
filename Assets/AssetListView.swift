@@ -7,6 +7,7 @@ struct AssetListView: View {
     @State private var assetToDelete: Asset?
     @State private var showingDeleteAlert = false
     @State private var showingAddAsset = false
+    @State private var selectedAsset: Asset?
     
     var totalAssetValue: Double {
         dataManager.assets.reduce(0) { $0 + $1.value }
@@ -67,7 +68,9 @@ struct AssetListView: View {
                     List {
                         ForEach(dataManager.assets) { asset in
                             ZStack {
-                                NavigationLink(destination: AssetDetailView(asset: asset)) {
+                                Button {
+                                    selectedAsset = asset
+                                } label: {
                                     EmptyView()
                                 }
                                 .opacity(0)
@@ -127,6 +130,18 @@ struct AssetListView: View {
             }
             .sheet(item: $assetToEdit) { asset in
                 EditAssetView(asset: asset)
+            }
+            .sheet(item: $selectedAsset) { asset in
+                NavigationView {
+                    AssetDetailView(asset: asset)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Done") {
+                                    selectedAsset = nil
+                                }
+                            }
+                        }
+                }
             }
             .alert("Delete Asset", isPresented: $showingDeleteAlert, presenting: assetToDelete) { asset in
                 Button("Delete", role: .destructive) {
