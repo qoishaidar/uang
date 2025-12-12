@@ -33,9 +33,7 @@ struct AllTransactionsView: View {
                             .listRowInsets(EdgeInsets())
                     }
                     .listStyle(.plain)
-                    .refreshable {
-                        await dataManager.fetchData()
-                    }
+
                 }
             }
             .navigationTitle("All Transactions")
@@ -48,6 +46,13 @@ struct AllTransactionsView: View {
                 }
             }
         }
+        .simultaneousGesture(
+            DragGesture().onEnded { value in
+                if value.translation.height > 100 && abs(value.translation.width) < 50 {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
+        )
 
     }
 }
