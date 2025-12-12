@@ -211,6 +211,7 @@ struct ExpenseChartView: View {
     @State private var showDetails = false
     @Binding var selectedTimeFilter: TimeFilter
     @State private var selectedCategory: CategoryDetail?
+    @State private var rotationAngle: Double = 0
     
     var aggregatedExpenses: [(category: String, amount: Double, color: Color)] {
         let filteredTransactions = transactions.filter { transaction in
@@ -300,6 +301,11 @@ struct ExpenseChartView: View {
                     .foregroundStyle(item.color)
                 }
                 .frame(height: 220)
+                .rotationEffect(.degrees(rotationAngle))
+                .animation(.linear(duration: 20).repeatForever(autoreverses: false), value: rotationAngle)
+                .onAppear {
+                    rotationAngle = 360
+                }
                 
                 if !aggregatedExpenses.isEmpty {
                     Divider()
