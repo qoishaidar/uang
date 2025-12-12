@@ -52,6 +52,21 @@ struct AssetListView: View {
                     .padding(.top)
                     .padding(.bottom, 16)
                     
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Theme.textSecondary.opacity(0.0),
+                                    Theme.textSecondary.opacity(0.3),
+                                    Theme.textSecondary.opacity(0.0)
+                                ]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(height: 1)
+                        .padding(.horizontal)
+                    
                     List {
                         ForEach(dataManager.assets) { asset in
                             ZStack {

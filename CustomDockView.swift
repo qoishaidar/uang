@@ -23,14 +23,16 @@ struct CustomDockView: View {
         HStack(spacing: 25) {
             ForEach(Tab.allCases, id: \.self) { tab in
                 Button(action: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
                         selectedTab = tab
                     }
                 }) {
                     VStack(spacing: 4) {
                         Image(systemName: tab.rawValue)
                             .font(.system(size: 24))
-                            .scaleEffect(selectedTab == tab ? 1.2 : 1.0)
+                            .scaleEffect(selectedTab == tab ? 1.25 : 1.0)
+                            .rotationEffect(selectedTab == tab ? .degrees(15) : .degrees(0))
+                            .animation(.spring(response: 0.4, dampingFraction: 0.5), value: selectedTab)
                         
                         if selectedTab == tab {
                             Circle()
