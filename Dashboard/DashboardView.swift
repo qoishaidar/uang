@@ -169,6 +169,7 @@ struct ExpenseChartView: View {
     var isHidden: Bool
     @State private var showDetails = false
     @State private var selectedTimeFilter: TimeFilter = .all
+    @State private var selectedCategory: CategoryDetail?
     
     enum TimeFilter: String, CaseIterable, Identifiable {
         case day = "Day"
@@ -305,6 +306,10 @@ struct ExpenseChartView: View {
                                         .foregroundColor(Theme.textPrimary)
                                         .hideAmount(if: isHidden)
                                 }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectedCategory = CategoryDetail(name: item.category)
+                                }
                             }
                         }
                         .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .top)))
@@ -314,6 +319,78 @@ struct ExpenseChartView: View {
         }
         .padding(24)
         .glassCard()
+        .sheet(item: $selectedCategory) { detail in
+            CategoryTransactionsView(
+                category: detail.name,
+                transactions: transactions,
+                timeFilter: selectedTimeFilter,
+                isHidden: isHidden
+            )
+        }
+    }
+}
+
+struct CategoryDetail: Identifiable {
+    let id = UUID()
+    let name: String
+}
+
+struct CategoryTransactionsView: View {
+    let category: String
+    let transactions: [Transaction]
+    let timeFilter: ExpenseChartView.TimeFilter
+    let isHidden: Bool
+    @Environment(\.dismiss) var dismiss
+    
+    var filteredTransactions: [Transaction] {
+        transactions.filter { transaction in
+            guard transaction.category == category, transaction.type == .expense else { return false }
+            
+            let calendar = Calendar.current
+            let now = Date()
+            
+            switch timeFilter {
+            case .day:
+                return calendar.isDateInToday(transaction.date)
+            case .month:
+                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .month)
+            case .year:
+                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .year)
+            case .all:
+                return true
+            }
+        }.sorted { $0.date > $1.date }
+    }
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                Theme.background.ignoresSafeArea()
+                
+                if filteredTransactions.isEmpty {
+                    Text("No transactions found")
+                        .foregroundColor(Theme.textSecondary)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(filteredTransactions) { transaction in
+                                TransactionRow(transaction: transaction, isHidden: isHidden)
+                            }
+                        }
+                        .padding()
+                    }
+                }
+            }
+            .navigationTitle(category)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }
 
