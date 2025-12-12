@@ -27,8 +27,8 @@ struct WalletListView: View {
                             Spacer()
                             Button(action: { showingAddWallet = true }) {
                                 Image(systemName: "plus.circle.fill")
-                                    .font(.title)
-                                    .foregroundColor(Theme.textPrimary)
+                                .font(.title)
+                                .foregroundColor(Theme.textPrimary)
                             }
                         }
                         .padding(.horizontal)

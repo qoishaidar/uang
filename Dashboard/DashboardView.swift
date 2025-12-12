@@ -48,7 +48,6 @@ struct DashboardView: View {
         return abs(filtered.reduce(0) { $0 + $1.amount })
     }
 
-    
     var body: some View {
         NavigationView {
             ZStack {
@@ -209,7 +208,6 @@ struct TotalBalanceCard: View {
         .glassCard()
     }
 }
-
 
 struct ExpenseChartView: View {
     let transactions: [Transaction]

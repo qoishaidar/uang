@@ -33,7 +33,6 @@ struct AllTransactionsView: View {
                             .listRowInsets(EdgeInsets())
                     }
                     .listStyle(.plain)
-
                 }
             }
             .navigationTitle("All Transactions")
@@ -53,6 +52,5 @@ struct AllTransactionsView: View {
                 }
             }
         )
-
     }
 }
