@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AssetListView: View {
-    @Environment(\.editMode) private var editMode
+
     @ObservedObject var dataManager = DataManager.shared
     @State private var assetToEdit: Asset?
     @State private var assetToDelete: Asset?
@@ -26,20 +26,7 @@ struct AssetListView: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(Theme.textPrimary)
                             Spacer()
-                            Button(action: {
-                                withAnimation {
-                                    if editMode?.wrappedValue == .active {
-                                        editMode?.wrappedValue = .inactive
-                                    } else {
-                                        editMode?.wrappedValue = .active
-                                    }
-                                }
-                            }) {
-                                Image(systemName: editMode?.wrappedValue == .active ? "checkmark.circle.fill" : "pencil.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(Theme.textPrimary)
-                            }
-                                .padding(.trailing, 8)
+
                             Button(action: { showingAddAsset = true }) {
                                 Image(systemName: "plus.circle.fill")
                                     .font(.title)
