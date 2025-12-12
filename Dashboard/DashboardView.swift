@@ -14,6 +14,7 @@ enum TimeFilter: String, CaseIterable, Identifiable {
 struct DashboardView: View {
     @ObservedObject var dataManager = DataManager.shared
     @State private var showingAddTransaction = false
+    @State private var showingAllTransactions = false
     @State private var selectedTimeFilter: TimeFilter = .all
     var isDockVisible: Bool = true
     
@@ -88,7 +89,9 @@ struct DashboardView: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Theme.textPrimary)
                                 Spacer()
-                                NavigationLink(destination: AllTransactionsView()) {
+                                Button(action: {
+                                    showingAllTransactions = true
+                                }) {
                                     Text("View All")
                                         .font(.subheadline)
                                         .foregroundColor(Theme.primary)
@@ -144,6 +147,9 @@ struct DashboardView: View {
             .navigationBarHidden(true)
             .sheet(isPresented: $showingAddTransaction) {
                 AddTransactionView()
+            }
+            .sheet(isPresented: $showingAllTransactions) {
+                AllTransactionsView()
             }
         }
     }
