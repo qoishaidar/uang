@@ -101,24 +101,8 @@ struct WalletListView: View {
                                     Label("Delete", systemImage: "trash")
                                 }
                             }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) {
-                                    walletToDelete = wallet
-                                    showingDeleteAlert = true
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                                
-                                Button {
-                                    walletToEdit = wallet
-                                } label: {
-                                    Label("Edit", systemImage: "pencil")
-                                }
-                                .tint(.blue)
-                            }
                         }
                         .onMove(perform: moveWallets)
-                        .onDelete(perform: deleteWallet)
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
@@ -161,15 +145,6 @@ struct WalletListView: View {
         updatedWallets.move(fromOffsets: source, toOffset: destination)
         Task {
             await dataManager.reorderWallets(updatedWallets)
-        }
-    }
-    
-    private func deleteWallet(at offsets: IndexSet) {
-        for index in offsets {
-            let wallet = dataManager.wallets[index]
-            Task {
-                await dataManager.deleteWallet(id: wallet.id!)
-            }
         }
     }
 }

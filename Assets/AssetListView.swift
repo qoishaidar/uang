@@ -101,24 +101,8 @@ struct AssetListView: View {
                                     Label("Delete", systemImage: "trash")
                                 }
                             }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) {
-                                    assetToDelete = asset
-                                    showingDeleteAlert = true
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                                
-                                Button {
-                                    assetToEdit = asset
-                                } label: {
-                                    Label("Edit", systemImage: "pencil")
-                                }
-                                .tint(.blue)
-                            }
                         }
                         .onMove(perform: moveAssets)
-                        .onDelete(perform: deleteAsset)
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
@@ -161,15 +145,6 @@ struct AssetListView: View {
         updatedAssets.move(fromOffsets: source, toOffset: destination)
         Task {
             await dataManager.reorderAssets(updatedAssets)
-        }
-    }
-    
-    private func deleteAsset(at offsets: IndexSet) {
-        for index in offsets {
-            let asset = dataManager.assets[index]
-            Task {
-                await dataManager.deleteAsset(id: asset.id!)
-            }
         }
     }
 }
