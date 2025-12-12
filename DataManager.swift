@@ -62,25 +62,40 @@ class DataManager: ObservableObject {
     
     @MainActor
     func fetchData() async {
+        // Fetch Categories
         do {
-            async let categoriesTask: [Category] = client.from("categories").select().order("sort_order", ascending: true).execute().value
-            async let walletsTask: [Wallet] = client.from("wallets").select().order("sort_order", ascending: true).execute().value
-            async let assetsTask: [Asset] = client.from("assets").select().order("sort_order", ascending: true).execute().value
-            async let transactionsTask: [Transaction] = client.from("transactions").select().order("date", ascending: false).execute().value
-            
-            let (fetchedCategories, fetchedWallets, fetchedAssets, fetchedTransactions) = try await (categoriesTask, walletsTask, assetsTask, transactionsTask)
-            
+            let fetchedCategories: [Category] = try await client.from("categories").select().order("sort_order", ascending: true).execute().value
             self.categories = fetchedCategories
-            self.wallets = fetchedWallets
-            self.assets = fetchedAssets
-            self.transactions = fetchedTransactions
-            
-            calculateTotals()
-            saveToCache()
-            
         } catch {
-            print("Error fetching data: \(error)")
+            print("Error fetching categories: \(error)")
         }
+        
+        // Fetch Wallets
+        do {
+            let fetchedWallets: [Wallet] = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
+            self.wallets = fetchedWallets
+        } catch {
+            print("Error fetching wallets: \(error)")
+        }
+        
+        // Fetch Assets
+        do {
+            let fetchedAssets: [Asset] = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
+            self.assets = fetchedAssets
+        } catch {
+            print("Error fetching assets: \(error)")
+        }
+        
+        // Fetch Transactions
+        do {
+            let fetchedTransactions: [Transaction] = try await client.from("transactions").select().order("date", ascending: false).execute().value
+            self.transactions = fetchedTransactions
+        } catch {
+            print("Error fetching transactions: \(error)")
+        }
+        
+        calculateTotals()
+        saveToCache()
     }
 
     // ... (existing code)
@@ -459,6 +474,8 @@ class DataManager: ObservableObject {
             // Sort by sortOrder (if available) or just append
             self.categories = currentCategories.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
             
+            saveToCache()
+            
             // Also fetch fresh data
             await fetchData()
         } catch {
@@ -483,6 +500,9 @@ class DataManager: ObservableObject {
             
             try await client.from("categories").delete().eq("id", value: id).execute()
             print("Successfully deleted category with id: \(id)")
+            
+            saveToCache()
+            
             await fetchData()
         } catch {
             print("Error deleting category: \(error)")
@@ -500,6 +520,8 @@ class DataManager: ObservableObject {
             if let index = categories.firstIndex(where: { $0.id == category.id }) {
                 categories[index] = category
             }
+            
+            saveToCache()
             
             await fetchData()
         } catch {
