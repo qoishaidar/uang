@@ -4,6 +4,7 @@ struct SettingsView: View {
     @ObservedObject var dataManager = DataManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
     @State private var showingAddCategory = false
+    @State private var showingCategories = false
     
     var body: some View {
         NavigationView {
@@ -12,7 +13,7 @@ struct SettingsView: View {
                 
                 List {
                     Section(header: Text("General").foregroundColor(Theme.textSecondary)) {
-                        NavigationLink(destination: CategoriesListView()) {
+                        Button(action: { showingCategories = true }) {
                             HStack {
                                 Image(systemName: "list.bullet")
                                     .foregroundColor(Theme.textPrimary)
@@ -21,6 +22,11 @@ struct SettingsView: View {
                             }
                         }
                         .listRowBackground(Theme.cardBackground)
+                        .sheet(isPresented: $showingCategories) {
+                            NavigationView {
+                                CategoriesListView()
+                            }
+                        }
                     }
                     
                     Section(header: Text("Appearance").foregroundColor(Theme.textSecondary)) {
@@ -42,6 +48,7 @@ struct SettingsView: View {
 }
 
 struct CategoriesListView: View {
+    @Environment(\.presentationMode) var presentationMode
     @ObservedObject var dataManager = DataManager.shared
     @State private var showingAddCategory = false
     
@@ -71,6 +78,11 @@ struct CategoriesListView: View {
         }
         .navigationTitle("Categories")
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("Done") {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { showingAddCategory = true }) {
                     Image(systemName: "plus")
