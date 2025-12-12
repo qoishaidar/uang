@@ -83,9 +83,19 @@ struct Category: Identifiable, Codable, Hashable {
     var type: TransactionType
     var icon: String
     var group: String?
+    var sortOrder: Int?
     
     enum TransactionType: String, Codable, Hashable {
         case income
         case expense
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case type
+        case icon
+        case group
+        case sortOrder = "sort_order"
     }
 }

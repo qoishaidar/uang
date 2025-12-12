@@ -63,7 +63,7 @@ class DataManager: ObservableObject {
     @MainActor
     func fetchData() async {
         do {
-            async let categoriesTask: [Category] = client.from("categories").select().execute().value
+            async let categoriesTask: [Category] = client.from("categories").select().order("sort_order", ascending: true).execute().value
             async let walletsTask: [Wallet] = client.from("wallets").select().order("sort_order", ascending: true).execute().value
             async let assetsTask: [Asset] = client.from("assets").select().order("sort_order", ascending: true).execute().value
             async let transactionsTask: [Transaction] = client.from("transactions").select().order("date", ascending: false).execute().value
@@ -80,6 +80,32 @@ class DataManager: ObservableObject {
             
         } catch {
             print("Error fetching data: \(error)")
+        }
+    }
+
+    // ... (existing code)
+
+    @MainActor
+    func reorderCategories(_ categories: [Category]) async {
+        // Update local state with new sort orders
+        var updatedCategories = categories
+        for (index, _) in updatedCategories.enumerated() {
+            updatedCategories[index].sortOrder = index
+        }
+        self.categories = updatedCategories
+        
+        // Save to local cache immediately
+        saveToCache()
+        
+        do {
+            // Update each category in Supabase
+            for category in updatedCategories {
+                try await client.from("categories").update(category).eq("id", value: category.id).execute()
+            }
+            print("Successfully reordered categories")
+        } catch {
+            print("Error reordering categories: \(error)")
+            await fetchData()
         }
     }
     
@@ -423,10 +449,61 @@ class DataManager: ObservableObject {
     @MainActor
     func addCategory(_ category: Category) async {
         do {
-            let _: Category = try await client.from("categories").insert(category).select().single().execute().value
+            print("Attempting to add category: \(category.name), type: \(category.type)")
+            let result: Category = try await client.from("categories").insert(category).select().single().execute().value
+            print("Successfully added category to DB: \(result.name)")
+            
+            // Manually update local state immediately to ensure UI responsiveness
+            var currentCategories = self.categories
+            currentCategories.append(result)
+            // Sort by sortOrder (if available) or just append
+            self.categories = currentCategories.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
+            
+            // Also fetch fresh data
             await fetchData()
         } catch {
             print("Error adding category: \(error)")
+            // Fallback: if DB insert fails, we don't update local state
+        }
+    }
+    
+    @MainActor
+    func deleteCategory(id: String) async {
+        if let index = categories.firstIndex(where: { $0.id == id }) {
+            categories.remove(at: index)
+        }
+        
+        do {
+            // Optional: Handle transactions associated with this category if needed
+            // For now, we just delete the category. Transactions might just show the old category string or need migration.
+            // Since Transaction stores category as String (name), deleting the category definition might not break existing transactions immediately
+            // but it's good practice to consider referential integrity.
+            // However, the current Transaction model uses 'category: String', which is the name, not ID.
+            // If we delete the category, the name remains in transactions.
+            
+            try await client.from("categories").delete().eq("id", value: id).execute()
+            print("Successfully deleted category with id: \(id)")
+            await fetchData()
+        } catch {
+            print("Error deleting category: \(error)")
+            await fetchData()
+        }
+    }
+    
+    @MainActor
+    func updateCategory(_ category: Category) async {
+        do {
+            try await client.from("categories").update(category).eq("id", value: category.id).execute()
+            print("Successfully updated category: \(category.name)")
+            
+            // Manually update local state immediately
+            if let index = categories.firstIndex(where: { $0.id == category.id }) {
+                categories[index] = category
+            }
+            
+            await fetchData()
+        } catch {
+            print("Error updating category: \(error)")
         }
     }
 }

@@ -51,30 +51,89 @@ struct CategoriesListView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var dataManager = DataManager.shared
     @State private var showingAddCategory = false
+    @State private var selectedCategory: Category?
+    @State private var showingDeleteAlert = false
+    @State private var categoryToDelete: Category?
+    @State private var editMode: EditMode = .inactive
     
     var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
             
             List {
-                Section(header: Text("Income")) {
+                Section(header: 
+                    HStack {
+                        Text("Income")
+                        Spacer()
+                        Button(action: {
+                            withAnimation {
+                                if editMode == .active {
+                                    editMode = .inactive
+                                } else {
+                                    editMode = .active
+                                }
+                            }
+                        }) {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .foregroundColor(Theme.primary)
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                    }
+                ) {
                     ForEach(dataManager.categories.filter { $0.type == .income }) { category in
-                        CategoryRow(category: category)
+                        Button(action: {
+                            if editMode == .inactive {
+                                selectedCategory = category
+                            }
+                        }) {
+                            CategoryRow(category: category)
+                        }
+                        .disabled(editMode == .active) // Disable tap when editing
                     }
                     .onDelete { indexSet in
+                        confirmDelete(at: indexSet, type: .income)
+                    }
+                    .onMove { indices, newOffset in
+                        moveCategory(from: indices, to: newOffset, type: .income)
                     }
                 }
                 
                 Section(header: Text("Expense")) {
                     ForEach(dataManager.categories.filter { $0.type == .expense }) { category in
-                        CategoryRow(category: category)
+                        Button(action: {
+                            if editMode == .inactive {
+                                selectedCategory = category
+                            }
+                        }) {
+                            CategoryRow(category: category)
+                        }
+                        .disabled(editMode == .active)
                     }
                     .onDelete { indexSet in
+                        confirmDelete(at: indexSet, type: .expense)
+                    }
+                    .onMove { indices, newOffset in
+                        moveCategory(from: indices, to: newOffset, type: .expense)
                     }
                 }
             }
             .listStyle(InsetGroupedListStyle())
             .scrollContentBackground(.hidden)
+            .environment(\.editMode, $editMode)
+            .alert(isPresented: $showingDeleteAlert) {
+                Alert(
+                    title: Text("Delete Category?"),
+                    message: Text("Are you sure you want to delete this category? This action cannot be undone."),
+                    primaryButton: .destructive(Text("Delete")) {
+                        if let category = categoryToDelete {
+                            Task {
+                                await dataManager.deleteCategory(id: category.id)
+                            }
+                        }
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
         }
         .navigationTitle("Categories")
         .toolbar {
@@ -84,13 +143,66 @@ struct CategoriesListView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { showingAddCategory = true }) {
+                Button(action: { 
+                    selectedCategory = nil
+                    showingAddCategory = true 
+                }) {
                     Image(systemName: "plus")
                 }
-                .sheet(isPresented: $showingAddCategory) {
-                    AddCategoryView()
-                }
             }
+        }
+        .sheet(isPresented: $showingAddCategory) {
+            AddCategoryView(categoryToEdit: nil)
+        }
+        .sheet(item: $selectedCategory) { category in
+            AddCategoryView(categoryToEdit: category)
+        }
+        .onAppear {
+            Task {
+                await dataManager.fetchData()
+            }
+        }
+    }
+    
+    private func confirmDelete(at offsets: IndexSet, type: Category.TransactionType) {
+        let filteredCategories = dataManager.categories.filter { $0.type == type }
+        if let index = offsets.first {
+            categoryToDelete = filteredCategories[index]
+            showingDeleteAlert = true
+        }
+    }
+    
+    private func moveCategory(from source: IndexSet, to destination: Int, type: Category.TransactionType) {
+        var filteredCategories = dataManager.categories.filter { $0.type == type }
+        filteredCategories.move(fromOffsets: source, toOffset: destination)
+        
+        // Reconstruct the full list with the new order for this type
+        var newCategories = dataManager.categories.filter { $0.type != type }
+        newCategories.append(contentsOf: filteredCategories)
+        
+        // Since we split by type, we might want to ensure we don't mess up the overall order if we just append.
+        // A better approach is to update the sortOrder of the moved items and then save all.
+        // However, since we display them in sections, the relative order within the type matters most.
+        // Let's just update the sortOrder for ALL categories based on their new positions in the combined list?
+        // Or better: update the sortOrder for the specific type's items.
+        
+        // Let's re-merge carefully.
+        // Actually, if we just update the sortOrder of the items in `filteredCategories` to be sequential,
+        // and do the same for the other type, we can maintain order.
+        // But `reorderCategories` expects the full list.
+        
+        // Let's try to keep the relative order of the other type stable.
+        // We can just pass the re-merged list to `reorderCategories`.
+        // Note: The order of "Income" vs "Expense" sections in the UI is fixed.
+        // So we can just concatenate Income + Expense (or vice versa) and assign sort orders.
+        
+        let incomeCategories = type == .income ? filteredCategories : dataManager.categories.filter { $0.type == .income }
+        let expenseCategories = type == .expense ? filteredCategories : dataManager.categories.filter { $0.type == .expense }
+        
+        let allCategories = incomeCategories + expenseCategories
+        
+        Task {
+            await dataManager.reorderCategories(allCategories)
         }
     }
 }
@@ -107,6 +219,7 @@ struct CategoryRow: View {
                 .foregroundColor(Theme.textPrimary)
             Spacer()
         }
+        .contentShape(Rectangle())
         .listRowBackground(Theme.cardBackground)
     }
 }
@@ -115,9 +228,18 @@ struct AddCategoryView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var dataManager = DataManager.shared
     
+    var categoryToEdit: Category?
+    
     @State private var name: String = ""
     @State private var selectedIcon: String = "tag"
     @State private var type: Category.TransactionType = .expense
+    
+    init(categoryToEdit: Category? = nil) {
+        self.categoryToEdit = categoryToEdit
+        _name = State(initialValue: categoryToEdit?.name ?? "")
+        _selectedIcon = State(initialValue: categoryToEdit?.icon ?? "tag")
+        _type = State(initialValue: categoryToEdit?.type ?? .expense)
+    }
     
     let icons = [
         "tag", "cart", "creditcard", "banknote", "bag", "gift", "house", "car", "tram", "airplane",
@@ -151,7 +273,7 @@ struct AddCategoryView: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("New Category")
+            .navigationTitle(categoryToEdit == nil ? "New Category" : "Edit Category")
             .navigationBarItems(
                 leading: Button("Cancel") {
                     presentationMode.wrappedValue.dismiss()
@@ -165,17 +287,31 @@ struct AddCategoryView: View {
     }
     
     private func saveCategory() {
-        let newCategory = Category(
-            id: UUID().uuidString,
-            name: name,
-            type: type,
-            icon: selectedIcon,
-            group: nil
-        )
-        
-        Task {
-            await dataManager.addCategory(newCategory)
-            presentationMode.wrappedValue.dismiss()
+        if let category = categoryToEdit {
+            let updatedCategory = Category(
+                id: category.id,
+                name: name,
+                type: type,
+                icon: selectedIcon,
+                group: category.group
+            )
+            Task {
+                await dataManager.updateCategory(updatedCategory)
+                presentationMode.wrappedValue.dismiss()
+            }
+        } else {
+            let newCategory = Category(
+                id: UUID().uuidString,
+                name: name,
+                type: type,
+                icon: selectedIcon,
+                group: nil
+            )
+            
+            Task {
+                await dataManager.addCategory(newCategory)
+                presentationMode.wrappedValue.dismiss()
+            }
         }
     }
 }
