@@ -2,10 +2,51 @@ import SwiftUI
 import Charts
 import UIKit
 
+enum TimeFilter: String, CaseIterable, Identifiable {
+    case day = "Day"
+    case month = "Month"
+    case year = "Year"
+    case all = "All"
+    
+    var id: String { self.rawValue }
+}
+
 struct DashboardView: View {
     @ObservedObject var dataManager = DataManager.shared
     @State private var showingAddTransaction = false
+    @State private var selectedTimeFilter: TimeFilter = .all
     var isDockVisible: Bool = true
+    
+    var filteredIncome: Double {
+        filterTransactions(type: .income)
+    }
+    
+    var filteredExpense: Double {
+        filterTransactions(type: .expense)
+    }
+    
+    func filterTransactions(type: Transaction.TransactionType) -> Double {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let filtered = dataManager.transactions.filter { transaction in
+            guard transaction.type == type else { return false }
+            
+            switch selectedTimeFilter {
+            case .day:
+                return calendar.isDateInToday(transaction.date)
+            case .month:
+                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .month)
+            case .year:
+                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .year)
+            case .all:
+                return true
+            }
+        }
+        
+        return abs(filtered.reduce(0) { $0 + $1.amount })
+    }
+
     
     var body: some View {
         NavigationView {
@@ -29,7 +70,7 @@ struct DashboardView: View {
                         }
                         .padding(.horizontal)
                         
-                        TotalBalanceCard(balance: dataManager.totalBalance, income: dataManager.totalIncome, expense: dataManager.totalExpense, isHidden: dataManager.isAmountHidden)
+                        TotalBalanceCard(balance: dataManager.totalBalance, income: filteredIncome, expense: filteredExpense, isHidden: dataManager.isAmountHidden)
                             .padding(.horizontal)
                             .onTapGesture {
                                 withAnimation {
@@ -37,7 +78,7 @@ struct DashboardView: View {
                                 }
                             }
                         
-                        ExpenseChartView(transactions: dataManager.transactions, isHidden: dataManager.isAmountHidden)
+                        ExpenseChartView(transactions: dataManager.transactions, isHidden: dataManager.isAmountHidden, selectedTimeFilter: $selectedTimeFilter)
                             .padding(.horizontal)
                         
                         VStack(alignment: .leading, spacing: 16) {
@@ -168,17 +209,8 @@ struct ExpenseChartView: View {
     let transactions: [Transaction]
     var isHidden: Bool
     @State private var showDetails = false
-    @State private var selectedTimeFilter: TimeFilter = .all
+    @Binding var selectedTimeFilter: TimeFilter
     @State private var selectedCategory: CategoryDetail?
-    
-    enum TimeFilter: String, CaseIterable, Identifiable {
-        case day = "Day"
-        case month = "Month"
-        case year = "Year"
-        case all = "All"
-        
-        var id: String { self.rawValue }
-    }
     
     var aggregatedExpenses: [(category: String, amount: Double, color: Color)] {
         let filteredTransactions = transactions.filter { transaction in
@@ -338,7 +370,7 @@ struct CategoryDetail: Identifiable {
 struct CategoryTransactionsView: View {
     let category: String
     let transactions: [Transaction]
-    let timeFilter: ExpenseChartView.TimeFilter
+    let timeFilter: TimeFilter
     let isHidden: Bool
     @Environment(\.dismiss) var dismiss
     
