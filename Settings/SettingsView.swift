@@ -88,7 +88,7 @@ struct CategoriesListView: View {
                         }) {
                             CategoryRow(category: category)
                         }
-                        .disabled(editMode == .active) // Disable tap when editing
+                        .disabled(editMode == .active)
                     }
                     .onDelete { indexSet in
                         confirmDelete(at: indexSet, type: .income)
@@ -175,26 +175,6 @@ struct CategoriesListView: View {
     private func moveCategory(from source: IndexSet, to destination: Int, type: Category.TransactionType) {
         var filteredCategories = dataManager.categories.filter { $0.type == type }
         filteredCategories.move(fromOffsets: source, toOffset: destination)
-        
-        // Reconstruct the full list with the new order for this type
-        var newCategories = dataManager.categories.filter { $0.type != type }
-        newCategories.append(contentsOf: filteredCategories)
-        
-        // Since we split by type, we might want to ensure we don't mess up the overall order if we just append.
-        // A better approach is to update the sortOrder of the moved items and then save all.
-        // However, since we display them in sections, the relative order within the type matters most.
-        // Let's just update the sortOrder for ALL categories based on their new positions in the combined list?
-        // Or better: update the sortOrder for the specific type's items.
-        
-        // Let's re-merge carefully.
-        // Actually, if we just update the sortOrder of the items in `filteredCategories` to be sequential,
-        // and do the same for the other type, we can maintain order.
-        // But `reorderCategories` expects the full list.
-        
-        // Let's try to keep the relative order of the other type stable.
-        // We can just pass the re-merged list to `reorderCategories`.
-        // Note: The order of "Income" vs "Expense" sections in the UI is fixed.
-        // So we can just concatenate Income + Expense (or vice versa) and assign sort orders.
         
         let incomeCategories = type == .income ? filteredCategories : dataManager.categories.filter { $0.type == .income }
         let expenseCategories = type == .expense ? filteredCategories : dataManager.categories.filter { $0.type == .expense }

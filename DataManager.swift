@@ -10,7 +10,7 @@ class DataManager: ObservableObject {
         supabaseURL: URL(string: Config.supabaseUrl)!,
         supabaseKey: Config.supabaseKey,
         options: SupabaseClientOptions(
-            auth: .init(storage: NoOpAuthLocalStorage(), autoRefreshToken: false)
+            auth: .init(storage: NoOpAuthLocalStorage(), autoRefreshToken: false, emitLocalSessionAsInitialSession: true)
         )
     )
     
@@ -62,7 +62,6 @@ class DataManager: ObservableObject {
     
     @MainActor
     func fetchData() async {
-        // Fetch Categories
         do {
             let fetchedCategories: [Category] = try await client.from("categories").select().order("sort_order", ascending: true).execute().value
             self.categories = fetchedCategories
@@ -70,7 +69,6 @@ class DataManager: ObservableObject {
             print("Error fetching categories: \(error)")
         }
         
-        // Fetch Wallets
         do {
             let fetchedWallets: [Wallet] = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
             self.wallets = fetchedWallets
@@ -78,7 +76,6 @@ class DataManager: ObservableObject {
             print("Error fetching wallets: \(error)")
         }
         
-        // Fetch Assets
         do {
             let fetchedAssets: [Asset] = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
             self.assets = fetchedAssets
@@ -86,7 +83,6 @@ class DataManager: ObservableObject {
             print("Error fetching assets: \(error)")
         }
         
-        // Fetch Transactions
         do {
             let fetchedTransactions: [Transaction] = try await client.from("transactions").select().order("date", ascending: false).execute().value
             self.transactions = fetchedTransactions
@@ -98,22 +94,19 @@ class DataManager: ObservableObject {
         saveToCache()
     }
 
-    // ... (existing code)
+
 
     @MainActor
     func reorderCategories(_ categories: [Category]) async {
-        // Update local state with new sort orders
         var updatedCategories = categories
         for (index, _) in updatedCategories.enumerated() {
             updatedCategories[index].sortOrder = index
         }
         self.categories = updatedCategories
         
-        // Save to local cache immediately
         saveToCache()
         
         do {
-            // Update each category in Supabase
             for category in updatedCategories {
                 try await client.from("categories").update(category).eq("id", value: category.id).execute()
             }
@@ -468,19 +461,15 @@ class DataManager: ObservableObject {
             let result: Category = try await client.from("categories").insert(category).select().single().execute().value
             print("Successfully added category to DB: \(result.name)")
             
-            // Manually update local state immediately to ensure UI responsiveness
             var currentCategories = self.categories
             currentCategories.append(result)
-            // Sort by sortOrder (if available) or just append
             self.categories = currentCategories.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
             
             saveToCache()
             
-            // Also fetch fresh data
             await fetchData()
         } catch {
             print("Error adding category: \(error)")
-            // Fallback: if DB insert fails, we don't update local state
         }
     }
     
@@ -491,13 +480,6 @@ class DataManager: ObservableObject {
         }
         
         do {
-            // Optional: Handle transactions associated with this category if needed
-            // For now, we just delete the category. Transactions might just show the old category string or need migration.
-            // Since Transaction stores category as String (name), deleting the category definition might not break existing transactions immediately
-            // but it's good practice to consider referential integrity.
-            // However, the current Transaction model uses 'category: String', which is the name, not ID.
-            // If we delete the category, the name remains in transactions.
-            
             try await client.from("categories").delete().eq("id", value: id).execute()
             print("Successfully deleted category with id: \(id)")
             
@@ -516,7 +498,6 @@ class DataManager: ObservableObject {
             try await client.from("categories").update(category).eq("id", value: category.id).execute()
             print("Successfully updated category: \(category.name)")
             
-            // Manually update local state immediately
             if let index = categories.firstIndex(where: { $0.id == category.id }) {
                 categories[index] = category
             }
