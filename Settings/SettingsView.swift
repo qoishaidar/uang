@@ -29,7 +29,16 @@ struct SettingsView: View {
                         }
                     }
                     
-                    Section(header: Text("Appearance").foregroundColor(Theme.textSecondary)) {
+                    Section(header: Text("Appearance").foregroundColor(Theme.textSecondary), footer: 
+                        HStack {
+                            Spacer()
+                            Text("app by qois")
+                                .font(.footnote)
+                                .foregroundColor(Theme.textSecondary)
+                                .padding(.top, 20)
+                            Spacer()
+                        }
+                    ) {
                         Picker("Theme", selection: $themeManager.currentTheme) {
                             ForEach(AppTheme.allCases) { theme in
                                 Text(theme.rawValue).tag(theme)
