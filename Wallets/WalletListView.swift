@@ -33,18 +33,52 @@ struct WalletListView: View {
                         }
                         .padding(.horizontal)
                         
-                        VStack(alignment: .leading) {
-                            Text("Total Balance")
-                                .font(.subheadline)
-                                .foregroundColor(Theme.textSecondary)
-                            Text(totalWalletBalance.formatted(.currency(code: "IDR")))
-                                .font(.system(size: 32, weight: .bold, design: .rounded))
-                                .foregroundColor(Theme.textPrimary)
-                                .hideAmount(if: dataManager.isAmountHidden)
+                        ZStack {
+
+                            RoundedRectangle(cornerRadius: 24)
+                                .fill(Theme.cardBackground)
+                                .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+                            
+
+                            HStack {
+                                Spacer()
+                                Image(systemName: "wallet.pass.fill")
+                                    .font(.system(size: 120))
+                                    .foregroundColor(Theme.textPrimary.opacity(0.03))
+                                    .rotationEffect(.degrees(-15))
+                                    .offset(x: 30, y: 30)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 24))
+                            
+
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: "creditcard")
+                                        .foregroundColor(Theme.textPrimary)
+                                        .font(.system(size: 20))
+                                        .padding(10)
+                                        .background(Theme.textPrimary.opacity(0.05))
+                                        .clipShape(Circle())
+                                    
+                                    Text("TOTAL BALANCE")
+                                        .font(.caption)
+                                        .fontWeight(.bold)
+                                        .tracking(2)
+                                        .foregroundColor(Theme.textSecondary)
+                                    
+                                    Spacer()
+                                }
+                                
+                                Spacer()
+                                
+                                Text(totalWalletBalance.formatted(.currency(code: "IDR")))
+                                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                                    .foregroundColor(Theme.textPrimary)
+                                    .hideAmount(if: dataManager.isAmountHidden)
+                            }
+                            .padding(24)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .glassCard()
+                        .frame(height: 160)
                         .padding(.horizontal)
                     }
                     .padding(.top)

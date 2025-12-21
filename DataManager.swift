@@ -507,6 +507,16 @@ class DataManager: ObservableObject {
             print("Error updating category: \(error)")
         }
     }
+    
+    func getWalletName(id: Int?) -> String {
+        guard let id = id else { return "Unknown Wallet" }
+        return wallets.first(where: { $0.id == id })?.name ?? "Unknown Wallet"
+    }
+    
+    func getAssetName(id: Int?) -> String {
+        guard let id = id else { return "Unknown Asset" }
+        return assets.first(where: { $0.id == id })?.name ?? "Unknown Asset"
+    }
 }
 
 struct NoOpAuthLocalStorage: AuthLocalStorage {

@@ -446,18 +446,34 @@ struct TransactionRow: View {
                 Circle()
                     .fill(Color.primary.opacity(0.1))
                     .frame(width: 48, height: 48)
-                Image(systemName: DataManager.shared.getCategoryIcon(for: transaction.category))
-                    .font(.title2)
-                    .foregroundColor(Theme.textPrimary)
+                if transaction.type == .transfer {
+                    Image(systemName: "arrow.left.arrow.right")
+                        .font(.title2)
+                        .foregroundColor(Theme.textPrimary)
+                } else {
+                    Image(systemName: DataManager.shared.getCategoryIcon(for: transaction.category))
+                        .font(.title2)
+                        .foregroundColor(Theme.textPrimary)
+                }
             }
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(transaction.category)
                     .font(.headline)
                     .foregroundColor(Theme.textPrimary)
-                Text("\(transaction.date.formatted(date: .abbreviated, time: .omitted)) • \(transaction.title)")
-                    .font(.caption)
-                    .foregroundColor(Theme.textSecondary)
+                
+                Group {
+                    if transaction.type == .transfer {
+                        let fromName = transaction.fromWalletId != nil ? DataManager.shared.getWalletName(id: transaction.fromWalletId) : DataManager.shared.getAssetName(id: transaction.fromAssetId)
+                        let toName = transaction.toWalletId != nil ? DataManager.shared.getWalletName(id: transaction.toWalletId) : DataManager.shared.getAssetName(id: transaction.toAssetId)
+                        
+                        Text("\(transaction.date.formatted(date: .abbreviated, time: .omitted)) • Transfer from \(fromName) to \(toName)")
+                    } else {
+                        Text("\(transaction.date.formatted(date: .abbreviated, time: .omitted)) • \(transaction.title)")
+                    }
+                }
+                .font(.caption)
+                .foregroundColor(Theme.textSecondary)
             }
             
             Spacer()

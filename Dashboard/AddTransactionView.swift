@@ -33,7 +33,11 @@ struct AddTransactionView: View {
         self.transactionToEdit = transactionToEdit
         
         if let transaction = transactionToEdit {
-            _amount = State(initialValue: String(Int(transaction.amount)))
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            formatter.groupingSeparator = "."
+            let formattedAmount = formatter.string(from: NSNumber(value: Int(transaction.amount))) ?? String(Int(transaction.amount))
+            _amount = State(initialValue: formattedAmount)
             _date = State(initialValue: transaction.date)
             _title = State(initialValue: transaction.title)
             _type = State(initialValue: transaction.type)
@@ -126,8 +130,21 @@ struct AddTransactionView: View {
             TextField("Title", text: $title)
                 .focused($focusedField, equals: .title)
             TextField("Amount", text: $amount)
-                .keyboardType(.decimalPad)
+                .keyboardType(.numberPad)
                 .focused($focusedField, equals: .amount)
+                .onChange(of: amount) { newValue in
+                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    if filtered != "" {
+                        if let value = Int(filtered) {
+                            let formatter = NumberFormatter()
+                            formatter.numberStyle = .decimal
+                            formatter.groupingSeparator = "."
+                            amount = formatter.string(from: NSNumber(value: value)) ?? filtered
+                        }
+                    } else {
+                        amount = ""
+                    }
+                }
             
             DatePicker("Date", selection: $date, displayedComponents: .date)
         }
@@ -146,7 +163,11 @@ struct AddTransactionView: View {
                         .onTapGesture {
                             let generator = UIImpactFeedbackGenerator(style: .light)
                             generator.impactOccurred()
-                            selectedCategory = category
+                            if selectedCategory?.id == category.id {
+                                selectedCategory = nil
+                            } else {
+                                selectedCategory = category
+                            }
                         }
                     }
                 }
@@ -178,7 +199,11 @@ struct AddTransactionView: View {
                             .onTapGesture {
                                 let generator = UIImpactFeedbackGenerator(style: .light)
                                 generator.impactOccurred()
-                                selectedWallet = wallet
+                                if selectedWallet?.id == wallet.id {
+                                    selectedWallet = nil
+                                } else {
+                                    selectedWallet = wallet
+                                }
                             }
                         }
                     } else {
@@ -192,7 +217,11 @@ struct AddTransactionView: View {
                             .onTapGesture {
                                 let generator = UIImpactFeedbackGenerator(style: .light)
                                 generator.impactOccurred()
-                                selectedAsset = asset
+                                if selectedAsset?.id == asset.id {
+                                    selectedAsset = nil
+                                } else {
+                                    selectedAsset = asset
+                                }
                             }
                         }
                     }
@@ -226,7 +255,11 @@ struct AddTransactionView: View {
                                 .onTapGesture {
                                     let generator = UIImpactFeedbackGenerator(style: .light)
                                     generator.impactOccurred()
-                                    selectedFromWallet = wallet
+                                    if selectedFromWallet?.id == wallet.id {
+                                        selectedFromWallet = nil
+                                    } else {
+                                        selectedFromWallet = wallet
+                                    }
                                 }
                             }
                         } else {
@@ -240,7 +273,11 @@ struct AddTransactionView: View {
                                 .onTapGesture {
                                     let generator = UIImpactFeedbackGenerator(style: .light)
                                     generator.impactOccurred()
-                                    selectedFromAsset = asset
+                                    if selectedFromAsset?.id == asset.id {
+                                        selectedFromAsset = nil
+                                    } else {
+                                        selectedFromAsset = asset
+                                    }
                                 }
                             }
                         }
@@ -271,7 +308,11 @@ struct AddTransactionView: View {
                                 .onTapGesture {
                                     let generator = UIImpactFeedbackGenerator(style: .light)
                                     generator.impactOccurred()
-                                    selectedToWallet = wallet
+                                    if selectedToWallet?.id == wallet.id {
+                                        selectedToWallet = nil
+                                    } else {
+                                        selectedToWallet = wallet
+                                    }
                                 }
                             }
                         } else {
@@ -285,7 +326,11 @@ struct AddTransactionView: View {
                                 .onTapGesture {
                                     let generator = UIImpactFeedbackGenerator(style: .light)
                                     generator.impactOccurred()
-                                    selectedToAsset = asset
+                                    if selectedToAsset?.id == asset.id {
+                                        selectedToAsset = nil
+                                    } else {
+                                        selectedToAsset = asset
+                                    }
                                 }
                             }
                         }
@@ -298,7 +343,8 @@ struct AddTransactionView: View {
     }
     
     private func saveTransaction() {
-        guard let amountValue = Double(amount) else { return }
+        let cleanAmount = amount.replacingOccurrences(of: ".", with: "")
+        guard let amountValue = Double(cleanAmount) else { return }
         
         let transaction: Transaction
         
