@@ -9,6 +9,11 @@ struct AddTransactionView: View {
     @State private var amount: String = ""
     @State private var selectedCategory: Category?
     @State private var date = Date()
+    @FocusState private var focusedField: Field?
+    
+    enum Field {
+        case title, amount
+    }
     
     @State private var selectedWallet: Wallet?
     @State private var selectedAsset: Asset?
@@ -82,7 +87,9 @@ struct AddTransactionView: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle(transactionToEdit == nil ? "Add Transaction" : "Edit Transaction")
+            .onTapGesture {
+                focusedField = nil
+            }
             .navigationBarItems(
                 leading: Button("Cancel") {
                     presentationMode.wrappedValue.dismiss()
@@ -117,8 +124,10 @@ struct AddTransactionView: View {
             .pickerStyle(SegmentedPickerStyle())
             
             TextField("Title", text: $title)
+                .focused($focusedField, equals: .title)
             TextField("Amount", text: $amount)
                 .keyboardType(.decimalPad)
+                .focused($focusedField, equals: .amount)
             
             DatePicker("Date", selection: $date, displayedComponents: .date)
         }
@@ -126,11 +135,23 @@ struct AddTransactionView: View {
     
     var categorySection: some View {
         Section(header: Text("Category")) {
-            Picker("Category", selection: $selectedCategory) {
-                Text("Select Category").tag(nil as Category?)
-                ForEach(dataManager.categories.filter { $0.type.rawValue == type.rawValue }) { category in
-                    Label(category.name, systemImage: category.icon).tag(category as Category?)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(dataManager.categories.filter { $0.type.rawValue == type.rawValue }) { category in
+                        CategorySelectItemView(
+                            name: category.name,
+                            icon: category.icon,
+                            isSelected: selectedCategory?.id == category.id
+                        )
+                        .onTapGesture {
+                            let generator = UIImpactFeedbackGenerator(style: .light)
+                            generator.impactOccurred()
+                            selectedCategory = category
+                        }
+                    }
                 }
+                .padding(.horizontal, 4)
+                .padding(.vertical, 8)
             }
         }
     }
@@ -142,20 +163,42 @@ struct AddTransactionView: View {
                 Text("Asset").tag("Asset")
             }
             .pickerStyle(SegmentedPickerStyle())
-            if accountType == "Wallet" {
-                Picker("Wallet", selection: $selectedWallet) {
-                    Text("Select Wallet").tag(nil as Wallet?)
-                    ForEach(dataManager.wallets) { wallet in
-                        Text(wallet.name).tag(wallet as Wallet?)
+            .padding(.vertical, 8)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    if accountType == "Wallet" {
+                        ForEach(dataManager.wallets) { wallet in
+                            AccountSelectItemView(
+                                name: wallet.name,
+                                balance: wallet.balance,
+                                isSelected: selectedWallet?.id == wallet.id,
+                                isHidden: dataManager.isAmountHidden
+                            )
+                            .onTapGesture {
+                                let generator = UIImpactFeedbackGenerator(style: .light)
+                                generator.impactOccurred()
+                                selectedWallet = wallet
+                            }
+                        }
+                    } else {
+                        ForEach(dataManager.assets) { asset in
+                            AccountSelectItemView(
+                                name: asset.name,
+                                balance: asset.value,
+                                isSelected: selectedAsset?.id == asset.id,
+                                isHidden: dataManager.isAmountHidden
+                            )
+                            .onTapGesture {
+                                let generator = UIImpactFeedbackGenerator(style: .light)
+                                generator.impactOccurred()
+                                selectedAsset = asset
+                            }
+                        }
                     }
                 }
-            } else {
-                Picker("Asset", selection: $selectedAsset) {
-                    Text("Select Asset").tag(nil as Asset?)
-                    ForEach(dataManager.assets) { asset in
-                        Text(asset.name).tag(asset as Asset?)
-                    }
-                }
+                .padding(.horizontal, 4)
+                .padding(.vertical, 8)
             }
         }
     }
@@ -168,21 +211,42 @@ struct AddTransactionView: View {
                     Text("Asset").tag("Asset")
                 }
                 .pickerStyle(SegmentedPickerStyle())
+                .padding(.vertical, 8)
                 
-                if fromAccountType == "Wallet" {
-                    Picker("Wallet", selection: $selectedFromWallet) {
-                        Text("Select Wallet").tag(nil as Wallet?)
-                        ForEach(dataManager.wallets) { wallet in
-                            Text(wallet.name).tag(wallet as Wallet?)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        if fromAccountType == "Wallet" {
+                            ForEach(dataManager.wallets) { wallet in
+                                AccountSelectItemView(
+                                    name: wallet.name,
+                                    balance: wallet.balance,
+                                    isSelected: selectedFromWallet?.id == wallet.id,
+                                    isHidden: dataManager.isAmountHidden
+                                )
+                                .onTapGesture {
+                                    let generator = UIImpactFeedbackGenerator(style: .light)
+                                    generator.impactOccurred()
+                                    selectedFromWallet = wallet
+                                }
+                            }
+                        } else {
+                            ForEach(dataManager.assets) { asset in
+                                AccountSelectItemView(
+                                    name: asset.name,
+                                    balance: asset.value,
+                                    isSelected: selectedFromAsset?.id == asset.id,
+                                    isHidden: dataManager.isAmountHidden
+                                )
+                                .onTapGesture {
+                                    let generator = UIImpactFeedbackGenerator(style: .light)
+                                    generator.impactOccurred()
+                                    selectedFromAsset = asset
+                                }
+                            }
                         }
                     }
-                } else {
-                    Picker("Asset", selection: $selectedFromAsset) {
-                        Text("Select Asset").tag(nil as Asset?)
-                        ForEach(dataManager.assets) { asset in
-                            Text(asset.name).tag(asset as Asset?)
-                        }
-                    }
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 8)
                 }
             }
             
@@ -192,21 +256,42 @@ struct AddTransactionView: View {
                     Text("Asset").tag("Asset")
                 }
                 .pickerStyle(SegmentedPickerStyle())
+                .padding(.vertical, 8)
                 
-                if toAccountType == "Wallet" {
-                    Picker("Wallet", selection: $selectedToWallet) {
-                        Text("Select Wallet").tag(nil as Wallet?)
-                        ForEach(dataManager.wallets) { wallet in
-                            Text(wallet.name).tag(wallet as Wallet?)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        if toAccountType == "Wallet" {
+                            ForEach(dataManager.wallets) { wallet in
+                                AccountSelectItemView(
+                                    name: wallet.name,
+                                    balance: wallet.balance,
+                                    isSelected: selectedToWallet?.id == wallet.id,
+                                    isHidden: dataManager.isAmountHidden
+                                )
+                                .onTapGesture {
+                                    let generator = UIImpactFeedbackGenerator(style: .light)
+                                    generator.impactOccurred()
+                                    selectedToWallet = wallet
+                                }
+                            }
+                        } else {
+                            ForEach(dataManager.assets) { asset in
+                                AccountSelectItemView(
+                                    name: asset.name,
+                                    balance: asset.value,
+                                    isSelected: selectedToAsset?.id == asset.id,
+                                    isHidden: dataManager.isAmountHidden
+                                )
+                                .onTapGesture {
+                                    let generator = UIImpactFeedbackGenerator(style: .light)
+                                    generator.impactOccurred()
+                                    selectedToAsset = asset
+                                }
+                            }
                         }
                     }
-                } else {
-                    Picker("Asset", selection: $selectedToAsset) {
-                        Text("Select Asset").tag(nil as Asset?)
-                        ForEach(dataManager.assets) { asset in
-                            Text(asset.name).tag(asset as Asset?)
-                        }
-                    }
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 8)
                 }
             }
         }
@@ -259,5 +344,72 @@ struct AddTransactionView: View {
             }
             presentationMode.wrappedValue.dismiss()
         }
+    }
+}
+
+struct AccountSelectItemView: View {
+    let name: String
+    let balance: Double
+    let isSelected: Bool
+    let isHidden: Bool
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(name)
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundColor(isSelected ? .white : Theme.textSecondary)
+            
+            Text(balance.formatted(.currency(code: "IDR")))
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundColor(isSelected ? .white : Theme.textPrimary)
+                .hideAmount(if: isHidden)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(minWidth: 120, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(isSelected ? Theme.primary : Color.primary.opacity(0.05))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(isSelected ? Theme.primary : Color.primary.opacity(0.1), lineWidth: 1)
+        )
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+    }
+}
+
+struct CategorySelectItemView: View {
+    let name: String
+    let icon: String
+    let isSelected: Bool
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundColor(isSelected ? .white : Theme.primary)
+                .frame(width: 48, height: 48)
+                .background(
+                    Circle()
+                        .fill(isSelected ? .white.opacity(0.2) : Theme.primary.opacity(0.1))
+                )
+            
+            Text(name)
+                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .foregroundColor(isSelected ? .white : Theme.textPrimary)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
+        .frame(minWidth: 80)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(isSelected ? Theme.primary : Color.primary.opacity(0.05))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(isSelected ? Theme.primary : Color.primary.opacity(0.1), lineWidth: 1)
+        )
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
     }
 }
