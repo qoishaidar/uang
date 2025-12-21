@@ -94,6 +94,8 @@ struct AddTransactionView: View {
             .onTapGesture {
                 focusedField = nil
             }
+            .navigationTitle(transactionToEdit == nil ? "Add Transaction" : "Edit Transaction")
+            .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
                 leading: Button("Cancel") {
                     presentationMode.wrappedValue.dismiss()
@@ -119,7 +121,7 @@ struct AddTransactionView: View {
     }
     
     var detailsSection: some View {
-        Section(header: Text("Details")) {
+        Section {
             Picker("Type", selection: $type) {
                 Text("Expense").tag(Transaction.TransactionType.expense)
                 Text("Income").tag(Transaction.TransactionType.income)
@@ -151,7 +153,7 @@ struct AddTransactionView: View {
     }
     
     var categorySection: some View {
-        Section(header: Text("Category")) {
+        Section {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(dataManager.categories.filter { $0.type.rawValue == type.rawValue }) { category in
@@ -178,7 +180,7 @@ struct AddTransactionView: View {
     }
     
     var accountSection: some View {
-        Section(header: Text("Account")) {
+        Section {
             Picker("Type", selection: $accountType) {
                 Text("Wallet").tag("Wallet")
                 Text("Asset").tag("Asset")
