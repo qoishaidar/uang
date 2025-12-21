@@ -57,11 +57,11 @@ struct DashboardView: View {
                     VStack(spacing: 24) {
                         HStack {
                             VStack(alignment: .leading) {
-                                Text("Dashboard")
+                                Text("Home")
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
                                     .foregroundColor(Theme.textPrimary)
-                                Text("Sugeng Rawuh Mas Qois")
+                                Text("sugeng rawuh mas qois")
                                     .font(.subheadline)
                                     .foregroundColor(Theme.textSecondary)
                             }
@@ -111,7 +111,7 @@ struct DashboardView: View {
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, 140)
+                        .padding(.bottom, 100)
                     }
                     .padding(.top)
                 }
@@ -241,7 +241,7 @@ struct ExpenseChartView: View {
             (category: category, amount: abs(transactions.reduce(0) { $0 + $1.amount }))
         }.sorted { $0.amount > $1.amount }
         
-        let colors: [Color] = [.blue, .green, .orange, .purple, .pink, .yellow, .red, .cyan, .mint, .indigo]
+        let colors = Theme.chartColors
         
         return sorted.enumerated().map { index, item in
             (category: item.category, amount: item.amount, color: colors[index % colors.count])
@@ -251,7 +251,7 @@ struct ExpenseChartView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             HStack {
-                Text("Expenses Breakdown")
+                Text("Expenses Details")
                     .font(.headline)
                     .foregroundColor(Theme.textPrimary)
                 
@@ -295,16 +295,53 @@ struct ExpenseChartView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding()
             } else {
-                Chart(aggregatedExpenses, id: \.category) { item in
-                    SectorMark(
-                        angle: .value("Amount", item.amount),
-                        innerRadius: .ratio(0.618),
-                        angularInset: 1.5
-                    )
-                    .cornerRadius(5)
-                    .foregroundStyle(item.color)
+                ZStack {
+                    Chart(aggregatedExpenses, id: \.category) { item in
+                        SectorMark(
+                            angle: .value("Amount", item.amount),
+                            innerRadius: .ratio(0.618),
+                            angularInset: 1.5
+                        )
+                        .cornerRadius(5)
+                        .foregroundStyle(item.color)
+                    }
+                    .frame(height: 220)
+                    
+                    // Custom Axle (Poros)
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.gray.opacity(0.3), Color.gray.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 40, height: 40)
+                            .shadow(color: .black.opacity(0.2), radius: 2, x: 1, y: 1)
+                        
+                        Circle()
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                            .frame(width: 40, height: 40)
+                        
+                        Circle()
+                            .fill(Theme.primary.opacity(0.2))
+                            .frame(width: 12, height: 12)
+                        
+                        Circle()
+                            .fill(Theme.primary)
+                            .frame(width: 6, height: 6)
+                        
+                        // Radiating lines for "mechanical" feel
+                        ForEach(0..<8) { i in
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.4))
+                                .frame(width: 1, height: 4)
+                                .offset(y: -16)
+                                .rotationEffect(.degrees(Double(i) * 45))
+                        }
+                    }
                 }
-                .frame(height: 220)
                 .rotationEffect(.degrees(rotationAngle))
                 .animation(.linear(duration: 20).repeatForever(autoreverses: false), value: rotationAngle)
                 .onAppear {

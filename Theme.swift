@@ -7,8 +7,49 @@ struct Theme {
     static let textSecondary = Color.secondary
     static let primary = Color.blue
     
+    static let chartColors: [Color] = [
+        Color(hex: "6366f1"), // Indigo
+        Color(hex: "10b981"), // Emerald
+        Color(hex: "f59e0b"), // Amber
+        Color(hex: "f43f5e"), // Rose
+        Color(hex: "06b6d4"), // Cyan
+        Color(hex: "8b5cf6"), // Violet
+        Color(hex: "f97316"), // Orange
+        Color(hex: "14b8a6"), // Teal
+        Color(hex: "3b82f6"), // Blue
+        Color(hex: "ec4899")  // Pink
+    ]
+    
     static func glassMaterial() -> Material {
         return .ultraThinMaterial
+    }
+}
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        let scanner = Scanner(string: hex)
+        scanner.scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 0, 0, 0)
+        }
+
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255,
+            opacity: Double(a) / 255
+        )
     }
 }
 
