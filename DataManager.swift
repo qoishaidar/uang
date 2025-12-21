@@ -94,8 +94,6 @@ class DataManager: ObservableObject {
         saveToCache()
     }
 
-
-
     @MainActor
     func reorderCategories(_ categories: [Category]) async {
         var updatedCategories = categories

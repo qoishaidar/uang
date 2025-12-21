@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct AssetListView: View {
-
     @ObservedObject var dataManager = DataManager.shared
     @State private var assetToEdit: Asset?
     @State private var assetToDelete: Asset?

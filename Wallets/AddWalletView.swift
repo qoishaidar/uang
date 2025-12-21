@@ -56,17 +56,3 @@ struct AddWalletView: View {
         }
     }
 }
-
-extension View {
-    func maxLength(_ length: Int) -> some View {
-        modifier(MaxLengthModifier(maxLength: length))
-    }
-}
-
-struct MaxLengthModifier: ViewModifier {
-    let maxLength: Int
-    
-    func body(content: Content) -> some View {
-        content
-    }
-}
