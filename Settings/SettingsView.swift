@@ -46,6 +46,14 @@ struct SettingsView: View {
                         }
                         .pickerStyle(.menu)
                         .listRowBackground(Theme.cardBackground)
+                        
+                        Picker("Dock Systems", selection: $themeManager.dockBehavior) {
+                            ForEach(DockBehavior.allCases) { behavior in
+                                Text(behavior.rawValue).tag(behavior)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .listRowBackground(Theme.cardBackground)
                     }
                 }
                 .listStyle(InsetGroupedListStyle())

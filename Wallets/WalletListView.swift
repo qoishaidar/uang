@@ -145,6 +145,7 @@ struct WalletListView: View {
             .navigationBarHidden(true)
             .sheet(isPresented: $showingAddWallet) {
                 AddWalletView()
+                    .presentationDetents([.medium])
             }
             .sheet(item: $walletToEdit) { wallet in
                 EditWalletView(wallet: wallet)

@@ -146,6 +146,7 @@ struct AssetListView: View {
             .navigationBarHidden(true)
             .sheet(isPresented: $showingAddAsset) {
                 AddAssetView()
+                    .presentationDetents([.medium])
             }
             .sheet(item: $assetToEdit) { asset in
                 EditAssetView(asset: asset)
