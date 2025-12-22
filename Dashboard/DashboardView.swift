@@ -42,69 +42,72 @@ struct DashboardView: View {
             ZStack {
                 Theme.background.ignoresSafeArea()
                 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text("Home")
-                                    .font(.largeTitle)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(Theme.textPrimary)
-                                Text("sugeng rawuh mas qois")
-                                    .font(.subheadline)
-                                    .foregroundColor(Theme.textSecondary)
-                            }
-                            Spacer()
-                            
-                        }
-                        .padding(.horizontal)
-                        
-                        TotalBalanceCard(balance: dataManager.totalBalance, income: filteredIncome, expense: filteredExpense, isHidden: dataManager.isAmountHidden)
-                            .padding(.horizontal)
-                            .onTapGesture {
-                                withAnimation {
-                                    dataManager.isAmountHidden.toggle()
-                                }
-                            }
-                        
-                        ExpenseChartView(transactions: dataManager.transactions, isHidden: dataManager.isAmountHidden, selectedTimeFilter: $selectedTimeFilter)
-                            .padding(.horizontal)
-                        
-                        VStack(alignment: .leading, spacing: 16) {
+                GeometryReader { geometry in
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 24) {
                             HStack {
-                                Text("Recent Activity")
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(Theme.textPrimary)
-                                Spacer()
-                                Button(action: {
-                                    showingAllTransactions = true
-                                }) {
-                                    Text("View All")
+                                VStack(alignment: .leading) {
+                                    Text("Home")
+                                        .font(.largeTitle)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Theme.textPrimary)
+                                    Text("sugeng rawuh mas qois")
                                         .font(.subheadline)
-                                        .foregroundColor(Theme.primary)
+                                        .foregroundColor(Theme.textSecondary)
+                                }
+                                Spacer()
+                                
+                            }
+                            .padding(.horizontal)
+                            
+                            TotalBalanceCard(balance: dataManager.totalBalance, income: filteredIncome, expense: filteredExpense, isHidden: dataManager.isAmountHidden)
+                                .padding(.horizontal)
+                                .onTapGesture {
+                                    withAnimation {
+                                        dataManager.isAmountHidden.toggle()
+                                    }
+                                }
+                            
+                            ExpenseChartView(transactions: dataManager.transactions, isHidden: dataManager.isAmountHidden, selectedTimeFilter: $selectedTimeFilter)
+                                .padding(.horizontal)
+                            
+                            VStack(alignment: .leading, spacing: 16) {
+                                HStack {
+                                    Text("Recent Activity")
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Theme.textPrimary)
+                                    Spacer()
+                                    Button(action: {
+                                        showingAllTransactions = true
+                                    }) {
+                                        Text("View All")
+                                            .font(.subheadline)
+                                            .foregroundColor(Theme.primary)
+                                    }
+                                }
+                                
+                                ForEach(dataManager.transactions.prefix(5)) { transaction in
+                                    TransactionRow(transaction: transaction, isHidden: dataManager.isAmountHidden)
+                                        .contextMenu {
+                                            Button(role: .destructive) {
+                                                transactionToDelete = transaction
+                                                showingDeleteAlert = true
+                                            } label: {
+                                                Label("Delete", systemImage: "trash")
+                                            }
+                                        }
                                 }
                             }
-                            
-                            ForEach(dataManager.transactions.prefix(5)) { transaction in
-                                TransactionRow(transaction: transaction, isHidden: dataManager.isAmountHidden)
-                                    .contextMenu {
-                                        Button(role: .destructive) {
-                                            transactionToDelete = transaction
-                                            showingDeleteAlert = true
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                            }
+                            .padding(.horizontal)
+                            .padding(.bottom, 100)
                         }
-                        .padding(.horizontal)
-                        .padding(.bottom, 100)
+                        .padding(.top)
+                        .frame(width: geometry.size.width)
                     }
-                    .padding(.top)
-                }
-                .refreshable {
-                    await dataManager.fetchData()
+                    .refreshable {
+                        await dataManager.fetchData()
+                    }
                 }
                 .alert("Delete Transaction", isPresented: $showingDeleteAlert) {
                     Button("Cancel", role: .cancel) { }
@@ -336,12 +339,15 @@ struct ExpenseChartView: View {
                                     Text(item.category)
                                         .font(.subheadline)
                                         .foregroundColor(Theme.textPrimary)
+                                        .lineLimit(1)
                                     Spacer()
                                     Text(item.amount.formatted(.currency(code: "IDR")))
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .foregroundColor(Theme.textPrimary)
                                         .hideAmount(if: isHidden)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.8)
                                 }
                                 .contentShape(Rectangle())
                                 .onTapGesture {
