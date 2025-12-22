@@ -34,13 +34,13 @@ struct ContentView: View {
         }
         .ignoresSafeArea(.keyboard)
         .ignoresSafeArea(.container, edges: .bottom)
-        .onChange(of: selectedTab) {
+        .onChange(of: selectedTab) { oldValue, newValue in
             showDock()
         }
         .onAppear {
             updateDockVisibility()
         }
-        .onChange(of: themeManager.dockBehavior) { _ in
+        .onChange(of: themeManager.dockBehavior) { oldValue, newValue in
             updateDockVisibility()
         }
     }

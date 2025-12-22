@@ -63,33 +63,36 @@ class DataManager: ObservableObject {
     @MainActor
     func fetchData() async {
         do {
-            let fetchedCategories: [Category] = try await client.from("categories").select().order("sort_order", ascending: true).execute().value
-            self.categories = fetchedCategories
+            self.categories = try await client.from("categories").select().order("sort_order", ascending: true).execute().value
         } catch {
-            print("Error fetching categories: \(error)")
+            do {
+                let fetched: [Category] = try await client.from("categories").select().execute().value
+                self.categories = fetched.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
+            } catch { print("Error fetching categories: \(error)") }
         }
-        
+
         do {
-            let fetchedWallets: [Wallet] = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
-            self.wallets = fetchedWallets
+            self.wallets = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
         } catch {
-            print("Error fetching wallets: \(error)")
+            do {
+                let fetched: [Wallet] = try await client.from("wallets").select().execute().value
+                self.wallets = fetched.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
+            } catch { print("Error fetching wallets: \(error)") }
         }
-        
+
         do {
-            let fetchedAssets: [Asset] = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
-            self.assets = fetchedAssets
+            self.assets = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
         } catch {
-            print("Error fetching assets: \(error)")
+            do {
+                let fetched: [Asset] = try await client.from("assets").select().execute().value
+                self.assets = fetched.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
+            } catch { print("Error fetching assets: \(error)") }
         }
-        
+
         do {
-            let fetchedTransactions: [Transaction] = try await client.from("transactions").select().order("date", ascending: false).execute().value
-            self.transactions = fetchedTransactions
-        } catch {
-            print("Error fetching transactions: \(error)")
-        }
-        
+            self.transactions = try await client.from("transactions").select().order("date", ascending: false).execute().value
+        } catch { print("Error fetching transactions: \(error)") }
+
         calculateTotals()
         saveToCache()
     }
@@ -101,41 +104,35 @@ class DataManager: ObservableObject {
             updatedCategories[index].sortOrder = index
         }
         self.categories = updatedCategories
-        
         saveToCache()
-        
         do {
             for category in updatedCategories {
                 try await client.from("categories").update(category).eq("id", value: category.id).execute()
             }
-            print("Successfully reordered categories")
         } catch {
             print("Error reordering categories: \(error)")
             await fetchData()
         }
     }
-    
+
     private func calculateTotals() {
         let walletTotal = wallets.reduce(0) { $0 + $1.balance }
         let assetTotal = assets.reduce(0) { $0 + $1.value }
         self.totalBalance = walletTotal + assetTotal
-        
         self.totalIncome = transactions.filter { $0.type == .income }.reduce(0) { $0 + $1.amount }
         self.totalExpense = transactions.filter { $0.type == .expense }.reduce(0) { $0 + $1.amount }
     }
-    
+
     @MainActor
     func addTransaction(_ transaction: Transaction) async {
         do {
             let _: Transaction = try await client.from("transactions").insert(transaction).select().single().execute().value
-            
             if transaction.type == .expense {
                 if let walletId = transaction.walletId, let index = wallets.firstIndex(where: { $0.id == walletId }) {
                     var wallet = wallets[index]
                     wallet.balance -= transaction.amount
                     try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
                 }
-                
                 if let assetId = transaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
                     var asset = assets[index]
                     asset.value -= transaction.amount
@@ -147,38 +144,33 @@ class DataManager: ObservableObject {
                     wallet.balance += transaction.amount
                     try await client.from("wallets").update(wallet).eq("id", value: walletId).execute()
                 }
-                
                 if let assetId = transaction.assetId, let index = assets.firstIndex(where: { $0.id == assetId }) {
                     var asset = assets[index]
                     asset.value += transaction.amount
                     try await client.from("assets").update(asset).eq("id", value: assetId).execute()
                 }
             } else if transaction.type == .transfer {
-                if let fromWalletId = transaction.fromWalletId, let index = wallets.firstIndex(where: { $0.id == fromWalletId }) {
+                if let fromId = transaction.fromWalletId, let index = wallets.firstIndex(where: { $0.id == fromId }) {
                     var wallet = wallets[index]
                     wallet.balance -= transaction.amount
-                    try await client.from("wallets").update(wallet).eq("id", value: fromWalletId).execute()
-                } else if let fromAssetId = transaction.fromAssetId, let index = assets.firstIndex(where: { $0.id == fromAssetId }) {
+                    try await client.from("wallets").update(wallet).eq("id", value: fromId).execute()
+                } else if let fromId = transaction.fromAssetId, let index = assets.firstIndex(where: { $0.id == fromId }) {
                     var asset = assets[index]
                     asset.value -= transaction.amount
-                    try await client.from("assets").update(asset).eq("id", value: fromAssetId).execute()
+                    try await client.from("assets").update(asset).eq("id", value: fromId).execute()
                 }
-                
-                if let toWalletId = transaction.toWalletId {
-                     var wallet: Wallet = try await client.from("wallets").select().eq("id", value: toWalletId).single().execute().value
+                if let toId = transaction.toWalletId {
+                     var wallet: Wallet = try await client.from("wallets").select().eq("id", value: toId).single().execute().value
                      wallet.balance += transaction.amount
-                     try await client.from("wallets").update(wallet).eq("id", value: toWalletId).execute()
-                } else if let toAssetId = transaction.toAssetId {
-                    var asset: Asset = try await client.from("assets").select().eq("id", value: toAssetId).single().execute().value
+                     try await client.from("wallets").update(wallet).eq("id", value: toId).execute()
+                } else if let toId = transaction.toAssetId {
+                    var asset: Asset = try await client.from("assets").select().eq("id", value: toId).single().execute().value
                     asset.value += transaction.amount
-                    try await client.from("assets").update(asset).eq("id", value: toAssetId).execute()
+                    try await client.from("assets").update(asset).eq("id", value: toId).execute()
                 }
             }
-            
             await fetchData()
-        } catch {
-            print("Error adding transaction: \(error)")
-        }
+        } catch { print("Error adding transaction: \(error)") }
     }
     
     @MainActor
@@ -234,9 +226,7 @@ class DataManager: ObservableObject {
             
             try await client.from("transactions").delete().eq("id", value: id).execute()
             await fetchData()
-        } catch {
-            print("Error deleting transaction: \(error)")
-        }
+        } catch {}
     }
     
     @MainActor
@@ -335,9 +325,7 @@ class DataManager: ObservableObject {
             try await client.from("transactions").update(transaction).eq("id", value: transaction.id!).execute()
             
             await fetchData()
-        } catch {
-            print("Error updating transaction: \(error)")
-        }
+        } catch {}
     }
     
     @MainActor
@@ -494,14 +482,10 @@ class DataManager: ObservableObject {
     func updateCategory(_ category: Category) async {
         do {
             try await client.from("categories").update(category).eq("id", value: category.id).execute()
-            print("Successfully updated category: \(category.name)")
-            
             if let index = categories.firstIndex(where: { $0.id == category.id }) {
                 categories[index] = category
             }
-            
             saveToCache()
-            
             await fetchData()
         } catch {
             print("Error updating category: \(error)")

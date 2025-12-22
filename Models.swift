@@ -98,4 +98,31 @@ struct Category: Identifiable, Codable, Hashable {
         case group
         case sortOrder = "sort_order"
     }
+    
+    init(id: String, name: String, type: TransactionType, icon: String, group: String? = nil, sortOrder: Int? = nil) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.icon = icon
+        self.group = group
+        self.sortOrder = sortOrder
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        icon = try container.decode(String.self, forKey: .icon)
+        group = try container.decodeIfPresent(String.self, forKey: .group)
+        sortOrder = try container.decodeIfPresent(Int.self, forKey: .sortOrder)
+        
+        // Robust type decoding
+        if let typeString = try? container.decode(String.self, forKey: .type),
+           let validType = TransactionType(rawValue: typeString) {
+            type = validType
+        } else {
+            // Default to expense if type is invalid/missing/mismatch
+            type = .expense
+        }
+    }
 }

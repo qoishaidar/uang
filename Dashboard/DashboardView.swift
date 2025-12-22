@@ -7,7 +7,6 @@ enum TimeFilter: String, CaseIterable, Identifiable {
     case month = "Month"
     case year = "Year"
     case all = "All"
-    
     var id: String { self.rawValue }
 }
 
@@ -20,33 +19,21 @@ struct DashboardView: View {
     @State private var transactionToDelete: Transaction?
     var isDockVisible: Bool = true
     
-    var filteredIncome: Double {
-        filterTransactions(type: .income)
-    }
-    
-    var filteredExpense: Double {
-        filterTransactions(type: .expense)
-    }
-    
+    var filteredIncome: Double { filterTransactions(type: .income) }
+    var filteredExpense: Double { filterTransactions(type: .expense) }
+
     func filterTransactions(type: Transaction.TransactionType) -> Double {
         let calendar = Calendar.current
         let now = Date()
-        
         let filtered = dataManager.transactions.filter { transaction in
             guard transaction.type == type else { return false }
-            
             switch selectedTimeFilter {
-            case .day:
-                return calendar.isDateInToday(transaction.date)
-            case .month:
-                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .month)
-            case .year:
-                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .year)
-            case .all:
-                return true
+            case .day: return calendar.isDateInToday(transaction.date)
+            case .month: return calendar.isDate(transaction.date, equalTo: now, toGranularity: .month)
+            case .year: return calendar.isDate(transaction.date, equalTo: now, toGranularity: .year)
+            case .all: return true
             }
         }
-        
         return abs(filtered.reduce(0) { $0 + $1.amount })
     }
 
@@ -231,36 +218,27 @@ struct ExpenseChartView: View {
     @State private var rotationAngle: Double = 0
     
     var aggregatedExpenses: [(category: String, amount: Double, color: Color)] {
+        let calendar = Calendar.current
+        let now = Date()
         let filteredTransactions = transactions.filter { transaction in
             guard transaction.type == .expense else { return false }
-            
-            let calendar = Calendar.current
-            let now = Date()
-            
             switch selectedTimeFilter {
-            case .day:
-                return calendar.isDateInToday(transaction.date)
-            case .month:
-                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .month)
-            case .year:
-                return calendar.isDate(transaction.date, equalTo: now, toGranularity: .year)
-            case .all:
-                return true
+            case .day: return calendar.isDateInToday(transaction.date)
+            case .month: return calendar.isDate(transaction.date, equalTo: now, toGranularity: .month)
+            case .year: return calendar.isDate(transaction.date, equalTo: now, toGranularity: .year)
+            case .all: return true
             }
         }
-        
         let grouped = Dictionary(grouping: filteredTransactions, by: { $0.category })
         let sorted = grouped.map { category, transactions in
             (category: category, amount: abs(transactions.reduce(0) { $0 + $1.amount }))
         }.sorted { $0.amount > $1.amount }
-        
         let colors = Theme.chartColors
-        
         return sorted.enumerated().map { index, item in
             (category: item.category, amount: item.amount, color: colors[index % colors.count])
         }
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             HStack {

@@ -134,7 +134,7 @@ struct AddTransactionView: View {
             TextField("Amount", text: $amount)
                 .keyboardType(.numberPad)
                 .focused($focusedField, equals: .amount)
-                .onChange(of: amount) { newValue in
+                .onChange(of: amount) { oldValue, newValue in
                     let filtered = newValue.filter { "0123456789".contains($0) }
                     if filtered != "" {
                         if let value = Int(filtered) {

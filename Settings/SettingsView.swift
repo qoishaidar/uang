@@ -69,72 +69,40 @@ struct CategoriesListView: View {
     @State private var selectedCategory: Category?
     @State private var showingDeleteAlert = false
     @State private var categoryToDelete: Category?
-    @State private var editMode: EditMode = .inactive
     
     var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
             
             List {
-                Section(header: 
-                    HStack {
-                        Text("Income")
-                        Spacer()
-                        Button(action: {
-                            withAnimation {
-                                if editMode == .active {
-                                    editMode = .inactive
-                                } else {
-                                    editMode = .active
-                                }
-                            }
-                        }) {
-                            Image(systemName: "arrow.up.arrow.down")
-                                .foregroundColor(Theme.primary)
-                                .font(.system(size: 16, weight: .semibold))
-                        }
-                    }
-                ) {
+                Section(header: Text("Income")) {
                     ForEach(dataManager.categories.filter { $0.type == .income }) { category in
                         Button(action: {
-                            if editMode == .inactive {
-                                selectedCategory = category
-                            }
+                            selectedCategory = category
                         }) {
                             CategoryRow(category: category)
                         }
-                        .disabled(editMode == .active)
                     }
                     .onDelete { indexSet in
                         confirmDelete(at: indexSet, type: .income)
-                    }
-                    .onMove { indices, newOffset in
-                        moveCategory(from: indices, to: newOffset, type: .income)
                     }
                 }
                 
                 Section(header: Text("Expense")) {
                     ForEach(dataManager.categories.filter { $0.type == .expense }) { category in
                         Button(action: {
-                            if editMode == .inactive {
-                                selectedCategory = category
-                            }
+                            selectedCategory = category
                         }) {
                             CategoryRow(category: category)
                         }
-                        .disabled(editMode == .active)
                     }
                     .onDelete { indexSet in
                         confirmDelete(at: indexSet, type: .expense)
-                    }
-                    .onMove { indices, newOffset in
-                        moveCategory(from: indices, to: newOffset, type: .expense)
                     }
                 }
             }
             .listStyle(InsetGroupedListStyle())
             .scrollContentBackground(.hidden)
-            .environment(\.editMode, $editMode)
             .alert(isPresented: $showingDeleteAlert) {
                 Alert(
                     title: Text("Delete Category?"),
@@ -184,20 +152,6 @@ struct CategoriesListView: View {
         if let index = offsets.first {
             categoryToDelete = filteredCategories[index]
             showingDeleteAlert = true
-        }
-    }
-    
-    private func moveCategory(from source: IndexSet, to destination: Int, type: Category.TransactionType) {
-        var filteredCategories = dataManager.categories.filter { $0.type == type }
-        filteredCategories.move(fromOffsets: source, toOffset: destination)
-        
-        let incomeCategories = type == .income ? filteredCategories : dataManager.categories.filter { $0.type == .income }
-        let expenseCategories = type == .expense ? filteredCategories : dataManager.categories.filter { $0.type == .expense }
-        
-        let allCategories = incomeCategories + expenseCategories
-        
-        Task {
-            await dataManager.reorderCategories(allCategories)
         }
     }
 }
