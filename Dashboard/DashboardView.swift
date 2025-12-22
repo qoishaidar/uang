@@ -320,40 +320,7 @@ struct ExpenseChartView: View {
                     }
                     .frame(height: 220)
                     
-                    // Custom Axle (Poros)
-                    ZStack {
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.gray.opacity(0.3), Color.gray.opacity(0.1)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 40, height: 40)
-                            .shadow(color: .black.opacity(0.2), radius: 2, x: 1, y: 1)
-                        
-                        Circle()
-                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                            .frame(width: 40, height: 40)
-                        
-                        Circle()
-                            .fill(Theme.primary.opacity(0.2))
-                            .frame(width: 12, height: 12)
-                        
-                        Circle()
-                            .fill(Theme.primary)
-                            .frame(width: 6, height: 6)
-                        
-                        // Radiating lines for "mechanical" feel
-                        ForEach(0..<8) { i in
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.4))
-                                .frame(width: 1, height: 4)
-                                .offset(y: -16)
-                                .rotationEffect(.degrees(Double(i) * 45))
-                        }
-                    }
+
                 }
                 .rotationEffect(.degrees(rotationAngle))
                 .animation(.linear(duration: 20).repeatForever(autoreverses: false), value: rotationAngle)
