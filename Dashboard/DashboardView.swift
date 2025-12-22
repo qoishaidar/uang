@@ -100,7 +100,7 @@ struct DashboardView: View {
                                 }
                             }
                             .padding(.horizontal)
-                            .padding(.bottom, 100)
+                            .padding(.bottom, isDockVisible ? 100 : 50)
                         }
                         .padding(.top)
                         .frame(width: geometry.size.width)
