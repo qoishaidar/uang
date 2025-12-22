@@ -68,7 +68,7 @@ struct DashboardView: View {
                                     }
                                 }
                             
-                            ExpenseChartView(transactions: dataManager.transactions, isHidden: dataManager.isAmountHidden, selectedTimeFilter: $selectedTimeFilter)
+                            ExpenseChartView(transactions: dataManager.transactions, isHidden: dataManager.isAmountHidden, selectedTimeFilter: $selectedTimeFilter, showingAddTransaction: $showingAddTransaction)
                                 .padding(.horizontal)
                             
                             VStack(alignment: .leading, spacing: 16) {
@@ -120,30 +120,6 @@ struct DashboardView: View {
                     }
                 } message: {
                     Text("Are you sure you want to delete this transaction?")
-                }
-                
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            let generator = UIImpactFeedbackGenerator(style: .medium)
-                            generator.prepare()
-                            generator.impactOccurred()
-                            showingAddTransaction = true
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.title.weight(.semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 56, height: 56)
-                                .background(Circle().fill(Theme.primary))
-                                .shadow(color: Theme.primary.opacity(0.3), radius: 10, x: 0, y: 5)
-                        }
-                        .buttonStyle(ScaleButtonStyle())
-                        .padding(.trailing, 24)
-                        .padding(.bottom, isDockVisible ? 90 : 30)
-                        .animation(.spring(), value: isDockVisible)
-                    }
                 }
             }
             .navigationBarHidden(true)
@@ -217,6 +193,7 @@ struct ExpenseChartView: View {
     var isHidden: Bool
     @State private var showDetails = false
     @Binding var selectedTimeFilter: TimeFilter
+    @Binding var showingAddTransaction: Bool
     @State private var selectedCategory: CategoryDetail?
     @State private var rotationAngle: Double = 0
     
@@ -307,6 +284,12 @@ struct ExpenseChartView: View {
                 .animation(.linear(duration: 20).repeatForever(autoreverses: false), value: rotationAngle)
                 .onAppear {
                     rotationAngle = 360
+                }
+                .onTapGesture {
+                    let generator = UIImpactFeedbackGenerator(style: .medium)
+                    generator.prepare()
+                    generator.impactOccurred()
+                    showingAddTransaction = true
                 }
                 
                 if !aggregatedExpenses.isEmpty {
