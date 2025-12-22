@@ -506,7 +506,13 @@ struct TransactionRow: View {
                         
                         Text("\(transaction.date.formatted(date: .abbreviated, time: .omitted)) • Transfer from \(fromName) to \(toName)")
                     } else {
-                        Text("\(transaction.date.formatted(date: .abbreviated, time: .omitted)) • \(transaction.title)")
+                        let sourceName = transaction.walletId != nil ? DataManager.shared.getWalletName(id: transaction.walletId) : (transaction.assetId != nil ? DataManager.shared.getAssetName(id: transaction.assetId) : "")
+                        
+                        if !sourceName.isEmpty && sourceName != "Unknown Wallet" && sourceName != "Unknown Asset" {
+                            Text("\(transaction.date.formatted(date: .abbreviated, time: .omitted)) • \(sourceName) • \(transaction.title)")
+                        } else {
+                            Text("\(transaction.date.formatted(date: .abbreviated, time: .omitted)) • \(transaction.title)")
+                        }
                     }
                 }
                 .font(.caption)
