@@ -5,6 +5,8 @@ struct WalletDetailView: View {
     @ObservedObject var dataManager = DataManager.shared
     @State private var transactionToEdit: Transaction?
     @State private var selectedFilter: TimeFilter = .all
+    @State private var showingDeleteAlert = false
+    @State private var transactionToDelete: Transaction?
     
     enum TimeFilter: String, CaseIterable {
         case day = "Day"
@@ -79,18 +81,16 @@ struct WalletDetailView: View {
                                     }
                                     
                                     Button(role: .destructive) {
-                                        Task {
-                                            await dataManager.deleteTransaction(id: transaction.id!)
-                                        }
+                                        transactionToDelete = transaction
+                                        showingDeleteAlert = true
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
                                 }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                     Button(role: .destructive) {
-                                        Task {
-                                            await dataManager.deleteTransaction(id: transaction.id!)
-                                        }
+                                        transactionToDelete = transaction
+                                        showingDeleteAlert = true
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
@@ -107,6 +107,18 @@ struct WalletDetailView: View {
                     .padding(.horizontal)
                 }
             }
+        }
+        .alert("Delete Transaction", isPresented: $showingDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                if let transaction = transactionToDelete {
+                    Task {
+                        await dataManager.deleteTransaction(id: transaction.id!)
+                    }
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete this transaction?")
         }
         .navigationTitle(wallet.name)
         .navigationBarTitleDisplayMode(.inline)

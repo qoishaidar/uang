@@ -16,6 +16,8 @@ struct DashboardView: View {
     @State private var showingAddTransaction = false
     @State private var showingAllTransactions = false
     @State private var selectedTimeFilter: TimeFilter = .all
+    @State private var showingDeleteAlert = false
+    @State private var transactionToDelete: Transaction?
     var isDockVisible: Bool = true
     
     var filteredIncome: Double {
@@ -101,9 +103,8 @@ struct DashboardView: View {
                                 TransactionRow(transaction: transaction, isHidden: dataManager.isAmountHidden)
                                     .contextMenu {
                                         Button(role: .destructive) {
-                                            Task {
-                                                await DataManager.shared.deleteTransaction(id: transaction.id!)
-                                            }
+                                            transactionToDelete = transaction
+                                            showingDeleteAlert = true
                                         } label: {
                                             Label("Delete", systemImage: "trash")
                                         }
@@ -117,6 +118,18 @@ struct DashboardView: View {
                 }
                 .refreshable {
                     await dataManager.fetchData()
+                }
+                .alert("Delete Transaction", isPresented: $showingDeleteAlert) {
+                    Button("Cancel", role: .cancel) { }
+                    Button("Delete", role: .destructive) {
+                        if let transaction = transactionToDelete {
+                            Task {
+                                await DataManager.shared.deleteTransaction(id: transaction.id!)
+                            }
+                        }
+                    }
+                } message: {
+                    Text("Are you sure you want to delete this transaction?")
                 }
                 
                 VStack {
