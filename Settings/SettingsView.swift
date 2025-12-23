@@ -70,13 +70,17 @@ struct CategoriesListView: View {
     @State private var showingDeleteAlert = false
     @State private var categoryToDelete: Category?
     
+    // Local state for UI stability during reordering
+    @State private var incomeCategories: [Category] = []
+    @State private var expenseCategories: [Category] = []
+    
     var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
             
             List {
                 Section(header: Text("Income")) {
-                    ForEach(dataManager.categories.filter { $0.type == .income }) { category in
+                    ForEach(incomeCategories) { category in
                         Button(action: {
                             selectedCategory = category
                         }) {
@@ -86,10 +90,11 @@ struct CategoriesListView: View {
                     .onDelete { indexSet in
                         confirmDelete(at: indexSet, type: .income)
                     }
+                    .onMove(perform: moveIncomeCategory)
                 }
                 
                 Section(header: Text("Expense")) {
-                    ForEach(dataManager.categories.filter { $0.type == .expense }) { category in
+                    ForEach(expenseCategories) { category in
                         Button(action: {
                             selectedCategory = category
                         }) {
@@ -99,6 +104,7 @@ struct CategoriesListView: View {
                     .onDelete { indexSet in
                         confirmDelete(at: indexSet, type: .expense)
                     }
+                    .onMove(perform: moveExpenseCategory)
                 }
             }
             .listStyle(InsetGroupedListStyle())
@@ -111,6 +117,7 @@ struct CategoriesListView: View {
                         if let category = categoryToDelete {
                             Task {
                                 await dataManager.deleteCategory(id: category.id)
+                                loadData() // Reload local state
                             }
                         }
                     },
@@ -126,33 +133,68 @@ struct CategoriesListView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { 
-                    selectedCategory = nil
-                    showingAddCategory = true 
-                }) {
-                    Image(systemName: "plus")
+                HStack {
+                    EditButton()
+                    Button(action: { 
+                        selectedCategory = nil
+                        showingAddCategory = true 
+                    }) {
+                        Image(systemName: "plus")
+                    }
                 }
             }
         }
         .sheet(isPresented: $showingAddCategory) {
             AddCategoryView(categoryToEdit: nil)
+                .onDisappear { loadData() }
         }
         .sheet(item: $selectedCategory) { category in
             AddCategoryView(categoryToEdit: category)
+                .onDisappear { loadData() }
         }
         .onAppear {
-            Task {
-                await dataManager.fetchData()
-            }
+            loadData()
         }
     }
     
+    private func loadData() {
+        // Only sync from local DataManager memory, do NOT re-fetch from network
+        // to avoid race conditions with pending background saves.
+        self.incomeCategories = dataManager.categories.filter { $0.type == .income }
+        self.expenseCategories = dataManager.categories.filter { $0.type == .expense }
+    }
+    
     private func confirmDelete(at offsets: IndexSet, type: Category.TransactionType) {
-        let filteredCategories = dataManager.categories.filter { $0.type == type }
+        let filtered = type == .income ? incomeCategories : expenseCategories
         if let index = offsets.first {
-            categoryToDelete = filteredCategories[index]
+            categoryToDelete = filtered[index]
             showingDeleteAlert = true
         }
+    }
+    
+    private func moveIncomeCategory(from source: IndexSet, to destination: Int) {
+        // Update local UI state immediately -> No Snapback
+        incomeCategories.move(fromOffsets: source, toOffset: destination)
+        saveOrder()
+    }
+    
+    private func moveExpenseCategory(from source: IndexSet, to destination: Int) {
+        // Update local UI state immediately -> No Snapback
+        expenseCategories.move(fromOffsets: source, toOffset: destination)
+        saveOrder()
+    }
+    
+    private func saveOrder() {
+        // Combine and update globally
+        var allCategories = incomeCategories + expenseCategories
+        
+        for (index, _) in allCategories.enumerated() {
+            allCategories[index].sortOrder = index
+        }
+        
+        // Update DataManager source of truth and trigger background save
+        // No need for Task/await here as reorderCategories handles the background task
+        dataManager.reorderCategories(allCategories)
     }
 }
 

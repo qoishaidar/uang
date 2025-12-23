@@ -60,33 +60,59 @@ class DataManager: ObservableObject {
         }
     }
     
+    private let pendingSortKey = "hasPendingCategorySort"
+    
     @MainActor
     func fetchData() async {
         do {
-            self.categories = try await client.from("categories").select().order("sort_order", ascending: true).execute().value
+            let fetchedCategories: [Category] = try await client.from("categories").select().order("sort_order", ascending: true).execute().value
+            
+            if UserDefaults.standard.bool(forKey: pendingSortKey) {
+                print("Found pending sort updates. Preserving local order and syncing.")
+                // Merge strategy: Keep local order, update content (e.g. names/icons) from server
+                // 1. Create lookup for fetched items
+                let fetchedMap = Dictionary(uniqueKeysWithValues: fetchedCategories.map { ($0.id, $0) })
+                
+                // 2. Reconstruct list based on local cache order
+                var mergedCategories: [Category] = []
+                var localIds = Set<String>()
+                
+                // Keep local items that still exist on server, updating their content
+                for localCat in self.categories {
+                    if let serverCat = fetchedMap[localCat.id] {
+                        var updatedCat = serverCat
+                        updatedCat.sortOrder = localCat.sortOrder // Force local sort order
+                        mergedCategories.append(updatedCat)
+                        localIds.insert(localCat.id)
+                    }
+                }
+                
+                // 3. Append any NEW items from server that weren't in local cache
+                let newItems = fetchedCategories.filter { !localIds.contains($0.id) }
+                mergedCategories.append(contentsOf: newItems)
+                
+                // 4. Update state
+                self.categories = mergedCategories
+                
+                // 5. Retry sync to server
+                reorderCategories(mergedCategories)
+            } else {
+                self.categories = fetchedCategories
+            }
         } catch {
-            do {
-                let fetched: [Category] = try await client.from("categories").select().execute().value
-                self.categories = fetched.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
-            } catch { print("Error fetching categories: \(error)") }
+            print("Error fetching categories: \(error)")
         }
 
         do {
             self.wallets = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
         } catch {
-            do {
-                let fetched: [Wallet] = try await client.from("wallets").select().execute().value
-                self.wallets = fetched.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
-            } catch { print("Error fetching wallets: \(error)") }
+            print("Error fetching wallets: \(error)")
         }
 
         do {
             self.assets = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
         } catch {
-            do {
-                let fetched: [Asset] = try await client.from("assets").select().execute().value
-                self.assets = fetched.sorted { ($0.sortOrder ?? 0) < ($1.sortOrder ?? 0) }
-            } catch { print("Error fetching assets: \(error)") }
+            print("Error fetching assets: \(error)")
         }
 
         do {
@@ -98,20 +124,37 @@ class DataManager: ObservableObject {
     }
 
     @MainActor
-    func reorderCategories(_ categories: [Category]) async {
+    func reorderCategories(_ categories: [Category]) {
         var updatedCategories = categories
         for (index, _) in updatedCategories.enumerated() {
             updatedCategories[index].sortOrder = index
         }
         self.categories = updatedCategories
         saveToCache()
-        do {
-            for category in updatedCategories {
-                try await client.from("categories").update(category).eq("id", value: category.id).execute()
+        
+        // Mark as dirty
+        UserDefaults.standard.set(true, forKey: pendingSortKey)
+        
+        // Use detached task to ensure network request survives view dismissal
+        Task.detached(priority: .background) {
+            do {
+                // We need to access the client. Since client is let, it's thread-safe.
+                try await SupabaseClient(
+                    supabaseURL: URL(string: Config.supabaseUrl)!,
+                    supabaseKey: Config.supabaseKey,
+                    options: SupabaseClientOptions(
+                        auth: .init(storage: NoOpAuthLocalStorage(), autoRefreshToken: false, emitLocalSessionAsInitialSession: true)
+                    )
+                ).from("categories").upsert(updatedCategories).execute()
+                
+                print("Successfully reordered categories")
+                // Mark as clean
+                await MainActor.run {
+                    UserDefaults.standard.set(false, forKey: "hasPendingCategorySort")
+                }
+            } catch {
+                print("Error reordering categories: \(error)")
             }
-        } catch {
-            print("Error reordering categories: \(error)")
-            await fetchData()
         }
     }
 
