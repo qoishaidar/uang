@@ -384,14 +384,12 @@ struct AddTransactionView: View {
             )
         }
         
-        Task {
-            if transactionToEdit != nil {
-                await dataManager.updateTransaction(transaction)
-            } else {
-                await dataManager.addTransaction(transaction)
-            }
-            presentationMode.wrappedValue.dismiss()
+        if transactionToEdit != nil {
+            dataManager.updateTransaction(transaction)
+        } else {
+            dataManager.addTransaction(transaction)
         }
+        presentationMode.wrappedValue.dismiss()
     }
 }
 

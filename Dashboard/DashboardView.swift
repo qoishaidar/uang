@@ -113,9 +113,7 @@ struct DashboardView: View {
                     Button("Cancel", role: .cancel) { }
                     Button("Delete", role: .destructive) {
                         if let transaction = transactionToDelete {
-                            Task {
-                                await DataManager.shared.deleteTransaction(id: transaction.id!)
-                            }
+                            DataManager.shared.deleteTransaction(transaction)
                         }
                     }
                 } message: {

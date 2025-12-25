@@ -36,11 +36,9 @@ struct AllTransactionsView: View {
                         Button("Delete", role: .destructive) {
                             if let offsets = offsetsToDelete {
                                 let transactionsToDelete = offsets.map { dataManager.transactions[$0] }
-                                Task {
                                     for transaction in transactionsToDelete {
-                                        await dataManager.deleteTransaction(id: transaction.id!)
+                                        dataManager.deleteTransaction(transaction)
                                     }
-                                }
                             }
                         }
                     } message: {

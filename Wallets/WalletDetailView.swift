@@ -65,45 +65,7 @@ struct WalletDetailView: View {
                         .padding(.horizontal)
                     }
                     
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("History")
-                            .font(.headline)
-                            .foregroundColor(Theme.textPrimary)
-                            .padding(.horizontal)
-                        
-                        ForEach(filteredTransactions) { transaction in
-                            TransactionRow(transaction: transaction, isHidden: dataManager.isAmountHidden)
-                                .contextMenu {
-                                    Button {
-                                        transactionToEdit = transaction
-                                    } label: {
-                                        Label("Edit", systemImage: "pencil")
-                                    }
-                                    
-                                    Button(role: .destructive) {
-                                        transactionToDelete = transaction
-                                        showingDeleteAlert = true
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
-                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    Button(role: .destructive) {
-                                        transactionToDelete = transaction
-                                        showingDeleteAlert = true
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                    
-                                    Button {
-                                        transactionToEdit = transaction
-                                    } label: {
-                                        Label("Edit", systemImage: "pencil")
-                                    }
-                                    .tint(.blue)
-                                }
-                        }
-                    }
+                        historySection
                     .padding(.horizontal)
                 }
             }
@@ -112,9 +74,7 @@ struct WalletDetailView: View {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
                 if let transaction = transactionToDelete {
-                    Task {
-                        await dataManager.deleteTransaction(id: transaction.id!)
-                    }
+                    dataManager.deleteTransaction(transaction)
                 }
             }
         } message: {
@@ -124,6 +84,33 @@ struct WalletDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $transactionToEdit) { transaction in
             AddTransactionView(transactionToEdit: transaction)
+        }
+    }
+    
+    private var historySection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("History")
+                .font(.headline)
+                .foregroundColor(Theme.textPrimary)
+                .padding(.horizontal)
+            
+            ForEach(filteredTransactions) { transaction in
+                TransactionRow(transaction: transaction, isHidden: dataManager.isAmountHidden)
+                    .contextMenu {
+                        Button {
+                            transactionToEdit = transaction
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        
+                        Button(role: .destructive) {
+                            transactionToDelete = transaction
+                            showingDeleteAlert = true
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+            }
         }
     }
 }
