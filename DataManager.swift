@@ -64,63 +64,83 @@ class DataManager: ObservableObject {
     
     @MainActor
     func fetchData() async {
+        print("Starting data fetch...")
+        
+        // 1. Fetch Categories
         do {
-            let fetchedCategories: [Category] = try await client.from("categories").select().order("sort_order", ascending: true).execute().value
+            var fetchedCategories: [Category] = []
+            do {
+                // Try with sort order
+                fetchedCategories = try await client.from("categories").select().order("sort_order", ascending: true).execute().value
+                print("Fetched \(fetchedCategories.count) categories with sort_order")
+            } catch {
+                print("Failed to fetch categories with sort_order, trying without: \(error)")
+                // Fallback to no order (in case sort_order column doesn't exist)
+                fetchedCategories = try await client.from("categories").select().execute().value
+                print("Fetched \(fetchedCategories.count) categories without sort_order")
+            }
             
-            if UserDefaults.standard.bool(forKey: pendingSortKey) {
+            if UserDefaults.standard.bool(forKey: pendingSortKey) && !self.categories.isEmpty {
                 print("Found pending sort updates. Preserving local order and syncing.")
-                // Merge strategy: Keep local order, update content (e.g. names/icons) from server
-                // 1. Create lookup for fetched items
                 let fetchedMap = Dictionary(uniqueKeysWithValues: fetchedCategories.map { ($0.id, $0) })
-                
-                // 2. Reconstruct list based on local cache order
                 var mergedCategories: [Category] = []
                 var localIds = Set<String>()
                 
-                // Keep local items that still exist on server, updating their content
                 for localCat in self.categories {
                     if let serverCat = fetchedMap[localCat.id] {
                         var updatedCat = serverCat
-                        updatedCat.sortOrder = localCat.sortOrder // Force local sort order
+                        updatedCat.sortOrder = localCat.sortOrder
                         mergedCategories.append(updatedCat)
                         localIds.insert(localCat.id)
                     }
                 }
                 
-                // 3. Append any NEW items from server that weren't in local cache
                 let newItems = fetchedCategories.filter { !localIds.contains($0.id) }
                 mergedCategories.append(contentsOf: newItems)
-                
-                // 4. Update state
                 self.categories = mergedCategories
-                
-                // 5. Retry sync to server
                 reorderCategories(mergedCategories)
             } else {
                 self.categories = fetchedCategories
             }
         } catch {
-            print("Error fetching categories: \(error)")
+            print("Final error fetching categories: \(error)")
         }
 
+        // 2. Fetch Wallets
         do {
-            self.wallets = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
+            do {
+                self.wallets = try await client.from("wallets").select().order("sort_order", ascending: true).execute().value
+            } catch {
+                print("Failed to fetch wallets with sort_order, trying without: \(error)")
+                self.wallets = try await client.from("wallets").select().execute().value
+            }
         } catch {
             print("Error fetching wallets: \(error)")
         }
 
+        // 3. Fetch Assets
         do {
-            self.assets = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
+            do {
+                self.assets = try await client.from("assets").select().order("sort_order", ascending: true).execute().value
+            } catch {
+                print("Failed to fetch assets with sort_order, trying without: \(error)")
+                self.assets = try await client.from("assets").select().execute().value
+            }
         } catch {
             print("Error fetching assets: \(error)")
         }
 
+        // 4. Fetch Transactions
         do {
             self.transactions = try await client.from("transactions").select().order("date", ascending: false).execute().value
-        } catch { print("Error fetching transactions: \(error)") }
+            print("Fetched \(self.transactions.count) transactions")
+        } catch { 
+            print("Error fetching transactions: \(error)") 
+        }
 
         calculateTotals()
         saveToCache()
+        print("Data fetch completed.")
     }
 
     @MainActor
